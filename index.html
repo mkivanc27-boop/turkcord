@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Turkcord</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="login">
+  <h2>Turkcord</h2>
+  <input id="username" placeholder="Kullanıcı adı">
+  <button onclick="join()">Giriş Yap</button>
+</div>
+
+<div id="chat" style="display:none;">
+  <div id="messages"></div>
+  <div id="inputArea">
+    <input id="messageInput" placeholder="Mesaj yaz...">
+    <button onclick="sendMessage()">Gönder</button>
+  </div>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
