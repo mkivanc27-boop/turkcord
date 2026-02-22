@@ -1,37 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
+  <meta charset="UTF-8">
   <title>Turkcord</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="login">
-  <input id="username" placeholder="Kullanıcı adı">
-  <button onclick="login()">Giriş</button>
-</div>
-
-<div id="chat" style="display:none;">
-  
-  <div id="sidebar">
-    <h3>Sunucular</h3>
-    <div id="serverList"></div>
+  <!-- LOGIN -->
+  <div id="login">
+    <input id="username" placeholder="Kullanıcı adı">
+    <button onclick="login()">Giriş</button>
   </div>
 
-  <div id="channelArea">
-    <h3 id="channelName"># genel</h3>
-    
-    <div id="messages"></div>
+  <!-- CHAT -->
+  <div id="chat" style="display:none;">
 
-    <div id="inputArea">
-      <input id="messageInput" placeholder="Mesaj yaz...">
-      <button onclick="sendMessage()">Gönder</button>
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+      <h3>Sunucular</h3>
+      <div id="serverList"></div>
     </div>
+
+    <!-- CHAT AREA -->
+    <div id="channelArea">
+      <h3 id="channelName"># kanal</h3>
+
+      <div id="messages"></div>
+
+      <div id="inputArea">
+        <input id="messageInput" placeholder="Mesaj yaz...">
+        <button onclick="sendMessage()">Gönder</button>
+      </div>
+    </div>
+
   </div>
 
-</div>
-
-<script type="module" src="script.js"></script>
+  <!-- SCRIPT EN ALTTA -->
+  <script type="module" src="script.js"></script>
 
 </body>
 </html>
