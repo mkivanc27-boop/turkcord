@@ -40,7 +40,22 @@ window.sendMessage = async function () {
 
 onSnapshot(collection(db, "messages"), (snapshot) => {
   const messagesDiv = document.getElementById("messages");
-  messagesDiv.innerHTML = "";
+
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === "added") {
+      const data = change.doc.data();
+      const div = document.createElement("div");
+      div.classList.add("message");
+      div.innerHTML = `
+        <strong>${data.user}</strong>
+        <span class="time">${new Date(data.time.seconds * 1000).toLocaleTimeString()}</span>
+        <div>${data.text}</div>
+      `;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  });
+});
 
   snapshot.forEach((doc) => {
     const data = doc.data();
