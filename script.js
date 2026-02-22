@@ -64,3 +64,39 @@ onSnapshot(collection(db, "messages"), (snapshot) => {
     messagesDiv.appendChild(div);
   });
 });
+import { getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+let currentServer = "";
+let currentChannel = "";
+
+async function loadServers() {
+  const querySnapshot = await getDocs(collection(db, "servers"));
+  const serverList = document.getElementById("serverList");
+  serverList.innerHTML = "";
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.textContent = data.name;
+    div.onclick = () => selectServer(doc.id);
+    serverList.appendChild(div);
+  });
+}
+
+function selectServer(serverId) {
+  currentServer = serverId;
+  loadChannels(serverId);
+}
+
+async function loadChannels(serverId) {
+  const querySnapshot = await getDocs(collection(db, "channels"));
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.serverId === serverId) {
+      currentChannel = doc.id;
+      document.getElementById("channelName").innerText = "# " + data.name;
+    }
+  });
+}
+
+loadServers();
