@@ -1,29 +1,77 @@
 body {
   margin: 0;
-  font-family: Arial;
-  background: #1e1f22;
+  font-family: 'Segoe UI', sans-serif;
+  background: #313338;
   color: white;
-  text-align: center;
+}
+
+#login {
+  margin-top: 100px;
+}
+
+#login input {
+  padding: 10px;
+  width: 200px;
+  border-radius: 6px;
+  border: none;
+}
+
+#login button {
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: none;
+  background: #5865f2;
+  color: white;
+  cursor: pointer;
+}
+
+#chat {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 #messages {
-  height: 60vh;
+  flex: 1;
   overflow-y: auto;
+  padding: 15px;
+}
+
+.message {
+  margin-bottom: 15px;
   padding: 10px;
+  background: #2b2d31;
+  border-radius: 8px;
+}
+
+.message strong {
+  color: #5865f2;
+}
+
+.time {
+  font-size: 12px;
+  margin-left: 10px;
+  color: gray;
 }
 
 #inputArea {
   display: flex;
-  justify-content: center;
-  padding: 10px;
+  padding: 15px;
+  background: #232428;
 }
 
 #inputArea input {
-  width: 60%;
-  padding: 8px;
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
 }
 
-button {
-  padding: 8px 12px;
-  margin-left: 5px;
+#inputArea button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: none;
+  background: #5865f2;
+  color: white;
 }
