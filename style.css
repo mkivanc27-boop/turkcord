@@ -75,3 +75,31 @@ body {
   background: #5865f2;
   color: white;
 }
+#chat {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 220px;
+  background: #1e1f22;
+  padding: 15px;
+}
+
+#serverList div {
+  padding: 8px;
+  background: #2b2d31;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#serverList div:hover {
+  background: #3a3c42;
+}
+
+#channelArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
