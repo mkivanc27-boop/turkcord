@@ -7,19 +7,31 @@
 <body>
 
 <div id="login">
-  <h2>Turkcord</h2>
   <input id="username" placeholder="Kullanıcı adı">
-  <button onclick="join()">Giriş Yap</button>
+  <button onclick="login()">Giriş</button>
 </div>
 
 <div id="chat" style="display:none;">
-  <div id="messages"></div>
-  <div id="inputArea">
-    <input id="messageInput" placeholder="Mesaj yaz...">
-    <button onclick="sendMessage()">Gönder</button>
+  
+  <div id="sidebar">
+    <h3>Sunucular</h3>
+    <div id="serverList"></div>
   </div>
+
+  <div id="channelArea">
+    <h3 id="channelName"># genel</h3>
+    
+    <div id="messages"></div>
+
+    <div id="inputArea">
+      <input id="messageInput" placeholder="Mesaj yaz...">
+      <button onclick="sendMessage()">Gönder</button>
+    </div>
+  </div>
+
 </div>
 
 <script type="module" src="script.js"></script>
+
 </body>
 </html>
