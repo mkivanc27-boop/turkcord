@@ -67,7 +67,6 @@ Hesabın yok mu?
 
 </div>
 
-
 <!-- REGISTER -->
 
 <div id="registerScreen" class="screen" style="display:none;">
@@ -86,7 +85,6 @@ Zaten hesabın var mı?
 </div>
 
 </div>
-
 
 <!-- APP -->
 
@@ -108,17 +106,16 @@ Zaten hesabın var mı?
 </div>
 
 
-<!-- 🔥 JAVASCRIPT -->
-
 <script type="module">
+
+/* 🔥 FIREBASE */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
 getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
+signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
@@ -165,15 +162,15 @@ document.getElementById("registerScreen").style.display="none";
 window.register = async()=>{
 try{
 
-const user = await createUserWithEmailAndPassword(
-auth,
-registerEmail.value,
-registerPassword.value
-);
+const username = document.getElementById("registerUsername").value;
+const email = document.getElementById("registerEmail").value;
+const password = document.getElementById("registerPassword").value;
+
+const user = await createUserWithEmailAndPassword(auth,email,password);
 
 await setDoc(doc(db,"users",user.user.uid),{
-username:registerUsername.value,
-email:registerEmail.value
+username:username,
+email:email
 });
 
 alert("Kayıt Başarılı");
@@ -192,11 +189,10 @@ alert("Register Hata:\n"+err.message);
 window.login = async()=>{
 try{
 
-await signInWithEmailAndPassword(
-auth,
-loginEmail.value,
-loginPassword.value
-);
+const email = document.getElementById("loginEmail").value;
+const password = document.getElementById("loginPassword").value;
+
+await signInWithEmailAndPassword(auth,email,password);
 
 alert("Login Başarılı");
 
@@ -213,6 +209,7 @@ alert("Login Hata:\n"+err.message);
 
 window.logout = async()=>{
 await signOut(auth);
+
 document.getElementById("app").style.display="none";
 document.getElementById("loginScreen").style.display="flex";
 };
@@ -221,24 +218,25 @@ document.getElementById("loginScreen").style.display="flex";
 /* ================= SERVER ================= */
 
 window.createServer = async()=>{
-if(!serverName.value) return;
+const name = document.getElementById("serverName").value;
+if(!name) return;
 
 await addDoc(collection(db,"servers"),{
-name:serverName.value,
+name:name,
 owner:auth.currentUser.uid
 });
 
-serverName.value="";
+document.getElementById("serverName").value="";
 };
 
 
 /* ================= LOAD SERVERS ================= */
 
 onSnapshot(collection(db,"servers"),snap=>{
+const serverList = document.getElementById("serverList");
 serverList.innerHTML="";
 
 snap.forEach(docSnap=>{
-
 const data = docSnap.data();
 
 const div=document.createElement("div");
@@ -249,7 +247,6 @@ div.style.borderRadius="6px";
 div.innerText=data.name;
 
 serverList.appendChild(div);
-
 });
 });
 
