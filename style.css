@@ -15,9 +15,8 @@ border-radius:15px;
 }
 
 input{
-display:block;
-margin:10px auto;
 padding:10px;
+margin:10px;
 border:none;
 border-radius:8px;
 width:220px;
@@ -33,19 +32,8 @@ color:white;
 cursor:pointer;
 }
 
-.small-text{
-font-size:13px;
-margin-top:10px;
-}
-
-.small-text span{
-color:#5865f2;
-cursor:pointer;
-font-weight:bold;
-}
-
 #messages{
-height:300px;
+height:250px;
 overflow-y:auto;
 background:#2b2d31;
 margin:20px;
