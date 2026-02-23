@@ -12,7 +12,7 @@ background:#1e1f22;
 color:white;
 }
 
-#auth{
+.screen{
 height:100vh;
 display:flex;
 flex-direction:column;
@@ -39,40 +39,50 @@ color:white;
 cursor:pointer;
 }
 
-#app{
-display:none;
-padding:20px;
+.link{
+color:#5865f2;
+cursor:pointer;
+font-size:14px;
 }
 </style>
 
 </head>
 <body>
 
-<div id="auth">
-<h2>TurkCord</h2>
+<div id="loginScreen" class="screen">
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Şifre">
+<h2>Login</h2>
 
-<button onclick="register()">Register</button>
-<button onclick="login()">Login</button>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Şifre">
+
+<button onclick="login()">Giriş</button>
+
+<div>
+Hesabın yok mu?
+<span class="link" onclick="showRegister()">Kayıt Ol</span>
+</div>
 
 </div>
 
-<div id="app">
-<h2>🎉 Giriş Başarılı</h2>
-<button onclick="logout()">Logout</button>
 
-<hr>
+<div id="registerScreen" class="screen" style="display:none;">
 
-<h3>Server Oluştur</h3>
+<h2>Kayıt Ol</h2>
 
-<input id="serverName" placeholder="Server adı">
-<button onclick="createServer()">Oluştur</button>
+<input id="registerUsername" placeholder="Kullanıcı Adı">
+<input id="registerEmail" placeholder="Email">
+<input id="registerPassword" type="password" placeholder="Şifre">
 
-<div id="serverList"></div>
+<button onclick="register()">Kayıt Ol</button>
+
+<div>
+Zaten hesabın var mı?
+<span class="link" onclick="showLogin()">Giriş Yap</span>
+</div>
 
 </div>
+
 
 <script type="module">
 
@@ -82,139 +92,90 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import {
 getAuth,
 createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
+signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
 getFirestore,
-collection,
-addDoc,
-onSnapshot
+doc,
+setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 /* 🔴 SENİN CONFIG */
 
 const firebaseConfig = {
-
 apiKey: "IzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
-
 authDomain: "turkcord-47b24.firebaseapp.com",
-
 projectId: "turkcord-47b24",
-
 storageBucket: "turkcord-47b24.firebasestorage.app",
-
 messagingSenderId: "474688300925",
-
 appId: "1:474688300925:web:75d8d4c690b92c7d438e14"
-
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-<!-- AUTH -->
 
-<div id="auth">
+/* ================= SCREEN SWITCH ================= */
 
-<!-- LOGIN SCREEN -->
-<div id="loginScreen">
-<h2>Login</h2>
+window.showRegister = ()=>{
+loginScreen.style.display="none";
+registerScreen.style.display="flex";
+};
 
-<input id="loginEmail" placeholder="Email">
-<input id="loginPassword" type="password" placeholder="Şifre">
+window.showLogin = ()=>{
+loginScreen.style.display="flex";
+registerScreen.style.display="none";
+};
 
-<button onclick="login()">Giriş Yap</button>
 
-<p style="margin-top:10px;font-size:14px;">
-Hesabın yok mu?
-<span onclick="showRegister()" style="color:#5865f2;cursor:pointer;">
-Hemen Kayıt Ol
-</span>
-</p>
+/* ================= REGISTER ================= */
 
-</div>
-
-<!-- REGISTER SCREEN -->
-<div id="registerScreen" style="display:none;">
-<h2>Kayıt Ol</h2>
-
-<input id="registerUsername" placeholder="Kullanıcı Adı">
-<input id="registerEmail" placeholder="Email">
-<input id="registerPassword" type="password" placeholder="Şifre">
-
-<button onclick="register()">Kayıt Ol</button>
-
-<p style="margin-top:10px;font-size:14px;">
-Zaten hesabın var mı?
-<span onclick="showLogin()" style="color:#5865f2;cursor:pointer;">
-Giriş Yap
-</span>
-</p>
-
-</div>
-
-</div>
-
-/* ================= UI ================= */
-
-onAuthStateChanged(auth,(user)=>{
-if(user){
-authDiv.style.display="none";
-appDiv.style.display="block";
-loadServers();
-}else{
-authDiv.style.display="flex";
-appDiv.style.display="none";
-}
-});
-
-/* ================= SERVER ================= */
-
-window.createServer = async()=>{
-if(!serverName.value) return;
+window.register = async()=>{
 
 try{
 
-await addDoc(collection(db,"servers"),{
-name:serverName.value,
-owner:auth.currentUser.uid
+const userCredential = await createUserWithEmailAndPassword(
+auth,
+registerEmail.value,
+registerPassword.value
+);
+
+await setDoc(doc(db,"users",userCredential.user.uid),{
+username:registerUsername.value,
+email:registerEmail.value
 });
 
-serverName.value="";
-alert("✅ Server Oluşturuldu");
+alert("Kayıt Başarılı");
 
 }catch(err){
-alert("Server Hata:\n"+err.message);
+alert("Register Hata:\n"+err.message);
 }
+
 };
 
-/* ================= LOAD SERVERS ================= */
 
-function loadServers(){
+/* ================= LOGIN ================= */
 
-onSnapshot(collection(db,"servers"),snap=>{
+window.login = async()=>{
 
-serverList.innerHTML="";
+try{
 
-snap.forEach(doc=>{
-const data = doc.data();
+await signInWithEmailAndPassword(
+auth,
+loginEmail.value,
+loginPassword.value
+);
 
-const div=document.createElement("div");
-div.style.background="#2b2d31";
-div.style.padding="8px";
-div.style.marginTop="6px";
-div.style.borderRadius="6px";
-div.innerText=data.name;
+alert("Login Başarılı");
 
-serverList.appendChild(div);
-});
-});
-
+}catch(err){
+alert("Login Hata:\n"+err.message);
 }
+
+};
 
 </script>
 
