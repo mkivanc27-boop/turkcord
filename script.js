@@ -62,3 +62,12 @@ msg.innerHTML=`<b>${data.user}</b><br>${data.text}`;
 div.appendChild(msg);
 });
 });
+const provider = new GoogleAuthProvider();
+
+window.googleLogin = async function(){
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(error){
+    alert(error.message);
+  }
+};
