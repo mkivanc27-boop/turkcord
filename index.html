@@ -1,44 +1,181 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurkCord</title>
+
+<style>
+body{
+margin:0;
+font-family:sans-serif;
+background:#1e1f22;
+color:white;
+}
+
+#auth{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:10px;
+}
+
+input{
+padding:10px;
+width:250px;
+border-radius:6px;
+border:none;
+background:#2b2d31;
+color:white;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#5865f2;
+color:white;
+cursor:pointer;
+}
+
+#app{
+display:none;
+padding:20px;
+}
+</style>
+
 </head>
 <body>
 
 <div id="auth">
+<h2>Login / Register</h2>
+
 <input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<input id="password" type="password" placeholder="Şifre">
+
 <button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
+
 </div>
 
-<div id="app" style="display:none;">
+<div id="app">
+<h2>Giriş Başarılı 🎉</h2>
+<button onclick="logout()">Logout</button>
 
-<div class="sidebar">
-<h3>Servers</h3>
+<hr>
+
+<h3>Server Oluştur</h3>
 <input id="serverName" placeholder="Server adı">
-<button onclick="createServer()">Create</button>
+<button onclick="createServer()">Oluştur</button>
+
 <div id="serverList"></div>
 
-<h3>Channels</h3>
-<input id="channelName" placeholder="Channel">
-<button onclick="createChannel()">Channel</button>
-<div id="channelList"></div>
 </div>
 
-<div class="chat">
+<script type="module">
 
-<div id="messages" class="messages"></div>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-<div class="input">
-<input id="messageInput">
-<button onclick="sendMessage()">Send</button>
-</div>
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-</div>
+/* 🔥 SENİN GERÇEK CONFIGİN */
 
-</div>
+const firebaseConfig = {
 
-<script type="module" src="app.js"></script>
+apiKey: "IzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+
+authDomain: "turkcord-47b24.firebaseapp.com",
+
+projectId: "turkcord-47b24",
+
+storageBucket: "turkcord-47b24.firebasestorage.app",
+
+messagingSenderId: "474688300925",
+
+appId: "1:474688300925:web:75d8d4c690b92c7d438e14"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ================= AUTH ================= */
+
+window.register = async()=>{
+await createUserWithEmailAndPassword(auth,email.value,password.value);
+};
+
+window.login = async()=>{
+await signInWithEmailAndPassword(auth,email.value,password.value);
+};
+
+window.logout = async()=>{
+await signOut(auth);
+};
+
+/* ================= UI ================= */
+
+onAuthStateChanged(auth,(user)=>{
+if(user){
+authDiv.style.display="none";
+appDiv.style.display="block";
+loadServers();
+}else{
+authDiv.style.display="flex";
+appDiv.style.display="none";
+}
+});
+
+/* ================= SERVER ================= */
+
+window.createServer = async()=>{
+if(!serverName.value) return;
+
+await addDoc(collection(db,"servers"),{
+name:serverName.value,
+owner:auth.currentUser.uid
+});
+
+serverName.value="";
+};
+
+/* ================= LOAD SERVERS ================= */
+
+function loadServers(){
+
+onSnapshot(collection(db,"servers"),snap=>{
+serverList.innerHTML="";
+
+snap.forEach(doc=>{
+const data = doc.data();
+
+const div=document.createElement("div");
+div.style.background="#2b2d31";
+div.style.padding="6px";
+div.style.marginTop="6px";
+div.style.borderRadius="6px";
+div.innerText=data.name;
+
+serverList.appendChild(div);
+});
+});
+
+}
+
+</script>
+
 </body>
 </html>
