@@ -1,205 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Canavar Chat</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
-body{background:#1e1f22;color:white;height:100vh;display:flex;flex-direction:column}
-.hidden{display:none}
-
-#authScreen,#appScreen{flex:1;display:flex}
-
-#authScreen{justify-content:center;align-items:center;flex-direction:column;gap:10px}
-
-input,button{
-padding:8px;
-border:none;
-border-radius:6px;
-}
-
-button{cursor:pointer;background:#5865f2;color:white}
-
-#sidebar{
-width:70px;
-background:#111214;
-display:flex;
-flex-direction:column;
-align-items:center;
-padding:10px;
-gap:10px;
-}
-
-.serverItem{
-width:45px;
-height:45px;
-background:#2b2d31;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-}
-
-#channels{
-width:200px;
-background:#2b2d31;
-padding:10px;
-display:flex;
-flex-direction:column;
-gap:6px;
-}
-
-.channelItem{cursor:pointer;font-size:14px}
-
-#chat{
-flex:1;
-display:flex;
-flex-direction:column;
-}
-
-#chatHeader{
-padding:10px;
-background:#111214;
-}
-
-#messages{
-flex:1;
-overflow-y:auto;
-padding:10px;
-display:flex;
-flex-direction:column;
-gap:5px;
-}
-
-.message{
-background:#2b2d31;
-padding:6px;
-border-radius:6px;
-font-size:14px;
-}
-
-.username{color:#57f287;font-weight:bold}
-
-#chatInput{
-display:flex;
-padding:10px;
-gap:5px;
-background:#111214;
-}
-
-#dmPanel{
-width:200px;
-background:#232428;
-padding:10px;
-display:flex;
-flex-direction:column;
-gap:6px;
-}
-
-#settingsPanel,#adminPanel{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#2b2d31;
-padding:20px;
-border-radius:10px;
-display:none;
-flex-direction:column;
-gap:10px;
-width:300px;
-z-index:1000;
-}
-
-.closeBtn{
-background:red;
-}
-
-.light{
-background:white;
-color:black;
-}
-
-.light #sidebar{background:#ddd}
-.light #channels{background:#eee}
-.light .message{background:#ddd;color:black}
-
-</style>
+  <meta charset="UTF-8">
+  <title>Discord Clone</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- AUTH -->
 <div id="authScreen">
-<h2>Login</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<input id="username" placeholder="Username (register)">
-<button id="loginBtn">Login</button>
-<button id="registerBtn">Register</button>
+  <h2>Giriş Yap</h2>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Şifre">
+  <button id="loginBtn">Giriş Yap</button>
+  <p id="switchAuth">Hesabın yok mu? Hemen yeni hesap aç</p>
 </div>
 
+<!-- APP -->
 <div id="appScreen" class="hidden">
 
-<div id="sidebar">
-<button id="createServerBtn">+</button>
-<button id="openSettingsBtn">⚙</button>
-</div>
+  <div id="servers"></div>
 
-<div id="channels">
-<h4 id="serverName">No Server</h4>
-<div id="channelList"></div>
-<button id="createChannelBtn">+ Channel</button>
-<hr>
-<h4>Friends</h4>
-<div id="friendList"></div>
-<button id="addFriendBtn">+ Friend</button>
-</div>
+  <div id="middlePanel"></div>
 
-<div id="chat">
-<div id="chatHeader">Select channel</div>
-<div id="messages"></div>
-<div id="typingIndicator"></div>
-<div id="chatInput">
-<input id="messageInput" placeholder="Message">
-<button id="sendBtn">Send</button>
-</div>
-</div>
-
-<div id="dmPanel">
-<h4>DM</h4>
-<div id="dmList"></div>
-</div>
+  <div id="chatPanel"></div>
 
 </div>
 
-<!-- SETTINGS PANEL -->
-<div id="settingsPanel">
-<h3>Settings</h3>
-<input id="bioInput" placeholder="Bio">
-<input id="avatarInput" placeholder="Avatar URL">
-<button id="saveProfileBtn">Save Profile</button>
-<button id="toggleThemeBtn">Toggle Theme</button>
-<button id="changePasswordBtn">Change Password</button>
-<button id="logoutBtn">Logout</button>
-<button id="deleteAccountBtn" class="closeBtn">Delete Account</button>
-<button onclick="settingsPanel.style.display='none'">Close</button>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="adminPanel">
-<h3>Admin Panel</h3>
-<input id="adminUidInput" placeholder="User UID">
-<button id="serverBanBtn">Server Ban</button>
-<button id="serverUnbanBtn">Server Unban</button>
-<button id="globalBanBtn">Global Ban</button>
-<button id="globalUnbanBtn">Global Unban</button>
-<button id="kickBtn">Kick</button>
-<button id="makeAdminBtn">Make Admin</button>
-<button onclick="adminPanel.style.display='none'">Close</button>
-</div>
-
-<script type="module" src="main.js"></script>
-
+<script type="module" src="app.js"></script>
 </body>
 </html>
