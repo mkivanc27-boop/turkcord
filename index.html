@@ -5,22 +5,8 @@
 <title>Platform</title>
 
 <style>
-
-/* ===== RESET ===== */
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:system-ui;
-}
-
-body{
-background:#1e1f22;
-color:white;
-overflow:hidden;
-}
-
-/* ===== AUTH ===== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+body{background:#1e1f22;color:white;}
 
 #auth{
 height:100vh;
@@ -28,111 +14,19 @@ display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-gap:12px;
-background:#111214;
-}
-
-#auth input{
-width:260px;
-padding:10px;
-border-radius:8px;
-border:none;
-background:#2b2d31;
-color:white;
-}
-
-#auth button{
-width:260px;
-padding:10px;
-border:none;
-border-radius:8px;
-background:#5865f2;
-color:white;
-cursor:pointer;
-}
-
-/* ===== APP ===== */
-
-#app{
-display:flex;
-height:100vh;
-}
-
-/* SERVER BAR */
-
-.server-bar{
-width:72px;
-background:#111214;
-display:flex;
-flex-direction:column;
-align-items:center;
-padding-top:15px;
-gap:12px;
-}
-
-.server-icon{
-width:48px;
-height:48px;
-border-radius:50%;
-background:#2b2d31;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-}
-
-.server-icon:hover{
-background:#5865f2;
-border-radius:35%;
-}
-
-/* CHAT */
-
-.chat{
-flex:1;
-display:flex;
-flex-direction:column;
-}
-
-.chat-header{
-height:50px;
-background:#111214;
-display:flex;
-align-items:center;
-padding-left:15px;
-border-bottom:1px solid #2b2d31;
-}
-
-.messages{
-flex:1;
-padding:15px;
-overflow:auto;
-}
-
-.message{
-background:#2b2d31;
-padding:8px;
-border-radius:6px;
-margin-bottom:6px;
-}
-
-.chat-input{
-padding:10px;
-background:#111214;
-display:flex;
 gap:10px;
 }
 
-.chat-input input{
-flex:1;
+input{
 padding:10px;
+width:250px;
 border-radius:6px;
 border:none;
 background:#2b2d31;
 color:white;
 }
 
-.chat-input button{
+button{
 padding:10px 15px;
 border:none;
 border-radius:6px;
@@ -141,49 +35,85 @@ color:white;
 cursor:pointer;
 }
 
+#app{
+display:none;
+height:100vh;
+padding:20px;
+}
 </style>
 
 </head>
 <body>
 
-<!-- AUTH -->
-
 <div id="auth">
 <h2>Login</h2>
 
-<input placeholder="Email">
-<input placeholder="Password">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-<button>Giriş</button>
-</div>
-
-<!-- APP -->
-
-<div id="app" style="display:none;">
-
-<div class="server-bar">
-<div class="server-icon">S</div>
-<div class="server-icon">+</div>
-</div>
-
-<div class="chat">
-
-<div class="chat-header">
-Server
-</div>
-
-<div class="messages">
-<div class="message">Test mesaj</div>
-</div>
-
-<div class="chat-input">
-<input placeholder="Mesaj yaz">
-<button>Gönder</button>
-</div>
+<button onclick="login()">Login</button>
+<button onclick="register()">Register</button>
 
 </div>
 
+<div id="app">
+<h2>🎉 Giriş Başarılı</h2>
+<button onclick="logout()">Logout</button>
 </div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+/* 🔥 BURAYA KENDİ FIREBASE CONFIGİNİ KOY */
+
+const firebaseConfig = {
+apiKey:"API_KEY",
+authDomain:"PROJECT.firebaseapp.com",
+projectId:"PROJECT",
+appId:"XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* REGISTER */
+
+window.register = async()=>{
+await createUserWithEmailAndPassword(auth,email.value,password.value);
+};
+
+/* LOGIN */
+
+window.login = async()=>{
+await signInWithEmailAndPassword(auth,email.value,password.value);
+};
+
+/* LOGOUT */
+
+window.logout = async()=>{
+await signOut(auth);
+};
+
+/* UI CONTROL */
+
+onAuthStateChanged(auth,(user)=>{
+if(user){
+document.getElementById("auth").style.display="none";
+document.getElementById("app").style.display="block";
+}else{
+document.getElementById("auth").style.display="flex";
+document.getElementById("app").style.display="none";
+}
+});
+
+</script>
 
 </body>
 </html>
