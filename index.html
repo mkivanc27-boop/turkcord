@@ -1,32 +1,619 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Discord Clone</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>UltraCord</title>
+<style>
+body{margin:0;font-family:sans-serif;background:#313338;color:white}
+.hidden{display:none}
+#auth{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh}
+#auth input{margin:5px;padding:10px;width:240px}
+#auth button{padding:10px;width:260px}
+#switch{margin-top:10px;color:#00a8fc;cursor:pointer}
+
+#app{display:flex;height:100vh}
+#servers{width:72px;background:#1e1f22;display:flex;flex-direction:column;align-items:center;padding-top:10px}
+.server{width:50px;height:50px;background:#36393f;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:10px;cursor:pointer}
+.server.active{background:#5865f2}
+
+#middle{width:250px;background:#2b2d31;overflow:auto}
+#chat{flex:1;display:flex;flex-direction:column}
+#msgs{flex:1;overflow:auto;padding:10px}
+.message{margin-bottom:6px}
+.me{color:#57f287}
+
+#input{display:flex}
+#input input{flex:1;padding:10px;border:none}
+#input button{padding:10px;border:none;background:#5865f2;color:white}
+
+@media(max-width:768px){
+#middle{width:200px}
+}
+</style>
 </head>
 <body>
 
-<!-- AUTH -->
-<div id="authScreen">
-  <h2>Giriş Yap</h2>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Şifre">
-  <button id="loginBtn">Giriş Yap</button>
-  <p id="switchAuth">Hesabın yok mu? Hemen yeni hesap aç</p>
+<div id="auth">
+<h2 id="title">Giriş Yap</h2>
+<input id="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Şifre">
+<button id="authBtn">Giriş Yap</button>
+<div id="switch">Hesabın yok mu? Hemen yeni hesap aç</div>
 </div>
 
-<!-- APP -->
-<div id="appScreen" class="hidden">
-
-  <div id="servers"></div>
-
-  <div id="middlePanel"></div>
-
-  <div id="chatPanel"></div>
-
+<div id="app" class="hidden">
+<div id="servers"></div>
+<div id="middle"></div>
+<div id="chat">
+<div id="msgs"></div>
+<div id="input">
+<input id="msgInput" placeholder="Mesaj yaz">
+<button id="send">Gönder</button>
+</div>
+</div>
 </div>
 
-<script type="module" src="app.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* 🔥 CONFIG */
+const firebaseConfig = {
+  apiKey:"API_KEY",
+  authDomain:"AUTH_DOMAIN",
+  projectId:"PROJECT_ID",
+  storageBucket:"STORAGE",
+  messagingSenderId:"SENDER",
+  appId:"APPID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* 🔥 GLOBAL STATE */
+let currentView = null; // dmList | dmChat | server
+let currentServer = null;
+let currentChannel = null;
+let currentDM = null;
+let unsubscribe = null;
+
+/* 🔥 DOM */
+const authDiv = document.getElementById("auth");
+const appDiv = document.getElementById("app");
+const serversDiv = document.getElementById("servers");
+const middleDiv = document.getElementById("middle");
+const msgsDiv = document.getElementById("msgs");
+
+/* 🔥 AUTH TOGGLE */
+let isLogin = true;
+switch.onclick = () => {
+  isLogin = !isLogin;
+  title.innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
+  authBtn.innerText = isLogin ? "Giriş Yap" : "Kayıt Ol";
+  switch.innerText = isLogin ?
+  "Hesabın yok mu? Hemen yeni hesap aç" :
+  "Zaten hesabın var mı? Giriş yap";
+};
+
+/* 🔥 LOGIN */
+authBtn.onclick = async () => {
+  const e = email.value;
+  const p = pass.value;
+  if(isLogin){
+    await signInWithEmailAndPassword(auth,e,p);
+  } else {
+    await createUserWithEmailAndPassword(auth,e,p);
+  }
+};
+
+/* 🔥 AUTH STATE */
+onAuthStateChanged(auth,user=>{
+  if(!user){
+    authDiv.classList.remove("hidden");
+    appDiv.classList.add("hidden");
+    return;
+  }
+  authDiv.classList.add("hidden");
+  appDiv.classList.remove("hidden");
+  initApp();
+});
+
+/* 🔥 INIT */
+function initApp(){
+  loadSidebar();
+  setView("dmList");
+}
+
+/* 🔥 VIEW SYSTEM */
+function setView(view){
+  currentView = view;
+  middleDiv.innerHTML="";
+  msgsDiv.innerHTML="";
+  if(unsubscribe){ unsubscribe(); unsubscribe=null; }
+
+  if(view==="dmList"){
+    middleDiv.innerHTML="<h3 style='padding:10px'>DM List</h3>";
+  }
+}
+
+/* 🔥 SIDEBAR */
+function loadSidebar(){
+  serversDiv.innerHTML="";
+  const dm=document.createElement("div");
+  dm.className="server active";
+  dm.innerText="💬";
+  dm.onclick=()=>setView("dmList");
+  serversDiv.appendChild(dm);
+}
+import {
+collection, doc, setDoc, addDoc,
+getDoc, updateDoc, onSnapshot,
+query, where, orderBy, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* 🔥 GLOBAL SERVER AUTO CREATE */
+async function ensureGlobalServer(){
+  const ref = doc(db,"servers","global");
+  const snap = await getDoc(ref);
+
+  if(!snap.exists()){
+    await setDoc(ref,{
+      name:"Genel",
+      owner:auth.currentUser.uid,
+      members:[auth.currentUser.uid],
+      createdAt:Date.now()
+    });
+
+    await setDoc(doc(db,"channels","global-general"),{
+      serverId:"global",
+      name:"general",
+      createdAt:Date.now()
+    });
+  } else {
+    const data = snap.data();
+    if(!data.members.includes(auth.currentUser.uid)){
+      await updateDoc(ref,{
+        members:[...data.members,auth.currentUser.uid]
+      });
+    }
+  }
+}
+
+/* INIT UPDATE */
+async function initApp(){
+  await ensureGlobalServer();
+  loadSidebar();
+  setView("dmList");
+}
+
+/* 🔥 SIDEBAR SERVERS REALTIME */
+function loadSidebar(){
+  serversDiv.innerHTML="";
+
+  // DM Button
+  const dm=document.createElement("div");
+  dm.className="server";
+  dm.innerText="💬";
+  dm.onclick=()=>setView("dmList");
+  serversDiv.appendChild(dm);
+
+  onSnapshot(collection(db,"servers"),snap=>{
+    snap.forEach(s=>{
+      const data=s.data();
+      if(!data.members.includes(auth.currentUser.uid)) return;
+
+      const div=document.createElement("div");
+      div.className="server";
+      div.innerText=data.name[0];
+      div.onclick=()=>{
+        currentServer=s.id;
+        setView("server");
+        loadChannels(s.id);
+      };
+      serversDiv.appendChild(div);
+    });
+  });
+}
+
+/* 🔥 CHANNEL LIST */
+function loadChannels(serverId){
+  middleDiv.innerHTML="";
+  const addBtn=document.createElement("div");
+  addBtn.innerText="+ Kanal Oluştur";
+  addBtn.style.padding="10px";
+  addBtn.style.cursor="pointer";
+  addBtn.onclick=async()=>{
+    const name=prompt("Kanal adı?");
+    if(!name)return;
+    await addDoc(collection(db,"channels"),{
+      serverId:serverId,
+      name:name,
+      createdAt:Date.now()
+    });
+  };
+  middleDiv.appendChild(addBtn);
+
+  unsubscribe = onSnapshot(
+    query(collection(db,"channels"),where("serverId","==",serverId)),
+    snap=>{
+      middleDiv.innerHTML="";
+      middleDiv.appendChild(addBtn);
+      snap.forEach(c=>{
+        const div=document.createElement("div");
+        div.innerText="# "+c.data().name;
+        div.style.padding="8px";
+        div.style.cursor="pointer";
+        div.onclick=()=>{
+          currentChannel=c.id;
+          loadMessages("server",c.id);
+        };
+        middleDiv.appendChild(div);
+      });
+    }
+  );
+}
+
+/* 🔥 REAL DM LIST (ALL USERS) */
+async function loadDMList(){
+  middleDiv.innerHTML="<h3 style='padding:10px'>DM List</h3>";
+
+  const users = await getDocs(collection(db,"users"));
+  users.forEach(u=>{
+    if(u.id===auth.currentUser.uid) return;
+
+    const div=document.createElement("div");
+    div.style.padding="8px";
+    div.style.cursor="pointer";
+    div.innerText=u.data().email;
+
+    div.onclick=()=>{
+      const room = createDMRoom(auth.currentUser.uid,u.id);
+      currentDM=room;
+      setView("dmChat");
+      loadMessages("dm",room);
+    };
+
+    middleDiv.appendChild(div);
+  });
+}
+
+/* 🔥 CREATE DM ROOM ID */
+function createDMRoom(uid1,uid2){
+  return [uid1,uid2].sort().join("_");
+}
+
+/* 🔥 STORE USER ON REGISTER */
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    await setDoc(doc(db,"users",user.uid),{
+      email:user.email,
+      createdAt:Date.now()
+    });
+  }
+});
+
+/* 🔥 MESSAGE ENGINE */
+function loadMessages(type,roomId){
+  msgsDiv.innerHTML="";
+  if(unsubscribe){unsubscribe();}
+
+  unsubscribe = onSnapshot(
+    query(collection(db,"messages"),
+    where("room","==",roomId),
+    orderBy("time")),
+    snap=>{
+      msgsDiv.innerHTML="";
+      snap.forEach(m=>{
+        const d=m.data();
+        const div=document.createElement("div");
+        div.className="message";
+        if(d.uid===auth.currentUser.uid) div.classList.add("me");
+        div.innerText=d.email+": "+d.text;
+        msgsDiv.appendChild(div);
+      });
+      msgsDiv.scrollTop=msgsDiv.scrollHeight;
+    }
+  );
+}
+
+/* 🔥 SEND MESSAGE */
+send.onclick=async()=>{
+  const text=msgInput.value;
+  if(!text)return;
+
+  let room=currentChannel || currentDM;
+  if(!room) return;
+
+  await addDoc(collection(db,"messages"),{
+    room:room,
+    text:text,
+    uid:auth.currentUser.uid,
+    email:auth.currentUser.email,
+    time:Date.now()
+  });
+
+  msgInput.value="";
+};
+  /* ===============================
+   PART 3 – PERMISSION / ONLINE / BOT
+================================= */
+
+/* 🔥 ROLE CHECK */
+async function getUserRole(serverId){
+  const snap = await getDoc(doc(db,"servers",serverId));
+  if(!snap.exists()) return null;
+  const data = snap.data();
+
+  if(data.owner === auth.currentUser.uid) return "owner";
+  if(data.admins && data.admins.includes(auth.currentUser.uid)) return "admin";
+  return "member";
+}
+
+/* 🔥 MAKE ADMIN (OWNER ONLY) */
+async function makeAdmin(serverId,targetUid){
+  const snap = await getDoc(doc(db,"servers",serverId));
+  if(!snap.exists()) return;
+
+  const data = snap.data();
+  if(data.owner !== auth.currentUser.uid) return alert("Yetkin yok");
+
+  await updateDoc(doc(db,"servers",serverId),{
+    admins: [...(data.admins||[]), targetUid]
+  });
+}
+
+/* 🔥 DELETE CHANNEL */
+async function deleteChannel(channelId){
+  const role = await getUserRole(currentServer);
+  if(role !== "owner" && role !== "admin")
+    return alert("Yetkin yok");
+
+  await updateDoc(doc(db,"channels",channelId),{
+    deleted:true
+  });
+}
+
+/* 🔥 ONLINE SYSTEM */
+onAuthStateChanged(auth, async user=>{
+  if(!user) return;
+
+  await updateDoc(doc(db,"users",user.uid),{
+    online:true
+  });
+
+  window.addEventListener("beforeunload",async()=>{
+    await updateDoc(doc(db,"users",user.uid),{
+      online:false
+    });
+  });
+});
+
+/* 🔥 TYPING INDICATOR */
+let typingTimeout;
+
+msgInput?.addEventListener("input",async()=>{
+  if(!currentRoom) return;
+
+  clearTimeout(typingTimeout);
+
+  await setDoc(doc(db,"typing",auth.currentUser.uid),{
+    room:currentRoom,
+    user:auth.currentUser.email
+  });
+
+  typingTimeout=setTimeout(async()=>{
+    await setDoc(doc(db,"typing",auth.currentUser.uid),{
+      room:null
+    });
+  },1500);
+});
+
+/* 🔥 OWO BOT */
+async function checkOwo(text,room){
+  if(text.toLowerCase() === "owo"){
+    await addDoc(collection(db,"messages"),{
+      room:room,
+      text:"OwO what's this?",
+      uid:"bot",
+      email:"OwO Bot",
+      time:Date.now()
+    });
+  }
+}
+
+/* 🔥 MODIFY SEND BUTTON */
+send.onclick = async()=>{
+  const text = msgInput.value;
+  if(!text) return;
+
+  let room = currentChannel || currentDM;
+  if(!room) return;
+
+  await addDoc(collection(db,"messages"),{
+    room:room,
+    text:text,
+    uid:auth.currentUser.uid,
+    email:auth.currentUser.email,
+    time:Date.now()
+  });
+
+  await checkOwo(text,room);
+
+  msgInput.value="";
+};
+  /* =====================================================
+   PART 4 – TYPING UI (MESAJ YAZMA ALANININ ÜSTÜ)
+===================================================== */
+
+const typingDiv = document.getElementById("typingIndicator");
+
+/* 🔥 TYPING REALTIME LISTENER */
+function listenTyping(){
+  if(!currentRoom) return;
+
+  onSnapshot(collection(db,"typing"), snap=>{
+    let users = [];
+
+    snap.forEach(docu=>{
+      const data = docu.data();
+      if(data.room === currentRoom && data.user !== auth.currentUser.email){
+        users.push(data.user);
+      }
+    });
+
+    if(users.length > 0){
+      typingDiv.innerText = users.join(", ") + " yazıyor...";
+    } else {
+      typingDiv.innerText = "";
+    }
+  });
+}
+
+/* 🔥 ROOM DEĞİŞİNCE TYPING AKTİF ET */
+function activateTypingListener(){
+  listenTyping();
+}
+
+/* 🔥 MESSAGE INPUT TYPING TRIGGER */
+msgInput?.addEventListener("input", async()=>{
+
+  if(!currentRoom) return;
+
+  await setDoc(doc(db,"typing",auth.currentUser.uid),{
+    room:currentRoom,
+    user:auth.currentUser.email,
+    time:Date.now()
+  });
+
+  clearTimeout(window.typingTimeout);
+
+  window.typingTimeout = setTimeout(async()=>{
+    await setDoc(doc(db,"typing",auth.currentUser.uid),{
+      room:null,
+      user:auth.currentUser.email
+    });
+  },1500);
+
+});
+  /* =====================================================
+   PART 5 – FRIEND SYSTEM
+===================================================== */
+
+/* 🔥 SEND FRIEND REQUEST */
+async function sendFriendRequest(targetUid){
+
+  if(targetUid === auth.currentUser.uid) return;
+
+  const requestId = [auth.currentUser.uid,targetUid].sort().join("_");
+
+  await setDoc(doc(db,"friendsRequests",requestId),{
+    from:auth.currentUser.uid,
+    to:targetUid,
+    status:"pending",
+    createdAt:Date.now()
+  });
+
+  alert("Friend request sent!");
+}
+
+/* 🔥 ACCEPT FRIEND */
+async function acceptFriend(requestDoc){
+
+  const data = requestDoc.data();
+
+  await setDoc(doc(db,"friends",requestDoc.id),{
+    users:[data.from,data.to],
+    createdAt:Date.now()
+  });
+
+  await updateDoc(doc(db,"friendsRequests",requestDoc.id),{
+    status:"accepted"
+  });
+
+  alert("Friend accepted!");
+}
+
+/* 🔥 LOAD FRIEND REQUESTS */
+function loadFriendRequests(){
+
+  const q = query(
+    collection(db,"friendsRequests"),
+    where("to","==",auth.currentUser.uid),
+    where("status","==","pending")
+  );
+
+  onSnapshot(q,snap=>{
+
+    middleDiv.innerHTML="<h3>Friend Requests</h3>";
+
+    snap.forEach(docu=>{
+      const data=docu.data();
+
+      const div=document.createElement("div");
+      div.style.padding="8px";
+      div.innerText="Request from: "+data.from;
+
+      const btn=document.createElement("button");
+      btn.innerText="Accept";
+      btn.onclick=()=>acceptFriend(docu);
+
+      div.appendChild(btn);
+      middleDiv.appendChild(div);
+    });
+
+  });
+}
+
+/* 🔥 LOAD FRIEND LIST */
+function loadFriendList(){
+
+  const q = query(
+    collection(db,"friends"),
+    where("users","array-contains",auth.currentUser.uid)
+  );
+
+  onSnapshot(q,snap=>{
+
+    middleDiv.innerHTML="<h3>Friends</h3>";
+
+    snap.forEach(docu=>{
+
+      const data=docu.data();
+
+      const friendUid = data.users.find(u=>u !== auth.currentUser.uid);
+
+      const div=document.createElement("div");
+      div.style.padding="8px";
+      div.style.cursor="pointer";
+      div.innerText="Friend: "+friendUid;
+
+      div.onclick=()=>{
+        const room = [auth.currentUser.uid,friendUid].sort().join("_");
+        currentRoom = room;
+        setView("dmChat");
+        loadMessages("dm",room);
+      };
+
+      middleDiv.appendChild(div);
+    });
+
+  });
+}
+
+/* 🔥 FRIEND BUTTON EKLE SIDEBAR’A */
+function addFriendSidebarButton(){
+
+  const btn = document.createElement("div");
+  btn.className="server";
+  btn.innerText="👥";
+  btn.onclick=()=>loadFriendList();
+
+  serversDiv.appendChild(btn);
+
+  }
+</script>
 </body>
 </html>
