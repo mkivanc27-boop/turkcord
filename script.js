@@ -69,7 +69,10 @@ window.googleLogin = async function(){
   await signInWithRedirect(auth, provider);
 };
   try {
-    await signInWithPopup(auth, provider);
+    window.googleLogin = async function(){
+  const provider = new GoogleAuthProvider();
+  await signInWithRedirect(auth, provider);
+};
   } catch(error){
     alert(error.message);
   }
