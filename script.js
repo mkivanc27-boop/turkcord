@@ -65,6 +65,9 @@ div.appendChild(msg);
 const provider = new GoogleAuthProvider();
 
 window.googleLogin = async function(){
+  const provider = new GoogleAuthProvider();
+  await signInWithRedirect(auth, provider);
+};
   try {
     await signInWithPopup(auth, provider);
   } catch(error){
