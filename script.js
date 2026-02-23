@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey: "API_KEYİN",
+apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
 authDomain: "turkcord-47b24.firebaseapp.com",
 projectId: "turkcord-47b24",
 storageBucket: "turkcord-47b24.firebasestorage.app",
