@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+apiKey: "API_KEYİN",
 authDomain: "turkcord-47b24.firebaseapp.com",
 projectId: "turkcord-47b24",
 storageBucket: "turkcord-47b24.firebasestorage.app",
@@ -15,40 +15,29 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentUser = "";
+let currentUser="";
+let localStream;
+let peerConnection;
+
+const servers = {
+iceServers:[{ urls:"stun:stun.l.google.com:19302"}]
+};
 
 /* ================= AUTH ================= */
 
 window.register = async()=>{
-const email = document.getElementById("regEmail").value;
-const pass = document.getElementById("regPass").value;
-await createUserWithEmailAndPassword(auth,email,pass);
+await createUserWithEmailAndPassword(auth,email.value,password.value);
 };
 
 window.login = async()=>{
-const email = document.getElementById("email").value;
-const pass = document.getElementById("password").value;
-await signInWithEmailAndPassword(auth,email,pass);
-};
-
-window.showLogin = ()=>{
-document.getElementById("loginBox").style.display="block";
-document.getElementById("registerBox").style.display="none";
-};
-
-window.showRegister = ()=>{
-document.getElementById("loginBox").style.display="none";
-document.getElementById("registerBox").style.display="block";
+await signInWithEmailAndPassword(auth,email.value,password.value);
 };
 
 onAuthStateChanged(auth,(user)=>{
 if(user){
 currentUser=user.email;
-
-document.getElementById("auth").style.display="none";
-document.getElementById("app").style.display="block";
-
-checkAdmin(user.email);
+authDiv.style.display="none";
+chat.style.display="block";
 loadMessages();
 }
 });
@@ -56,41 +45,72 @@ loadMessages();
 /* ================= CHAT ================= */
 
 window.sendMessage = async()=>{
-const input=document.getElementById("messageInput");
-if(!input.value.trim()) return;
+if(!messageInput.value.trim()) return;
 
 await addDoc(collection(db,"messages"),{
 user:currentUser,
-text:input.value,
+text:messageInput.value,
 time:new Date()
 });
 
-input.value="";
+messageInput.value="";
 };
 
 function loadMessages(){
 onSnapshot(collection(db,"messages"),(snap)=>{
-const div=document.getElementById("messages");
-div.innerHTML="";
-
+messages.innerHTML="";
 snap.forEach(doc=>{
 const data=doc.data();
-div.innerHTML += `<div><b>${data.user}</b><br>${data.text}</div><hr>`;
+messages.innerHTML+=`
+<div>
+<b>${data.user}</b><br>
+${data.text}
+</div><hr>
+`;
 });
 });
 }
 
-/* ================= ADMIN ================= */
+/* ================= VOICE ================= */
 
-function checkAdmin(email){
-if(email === "BURAYA_ADMIN_EMAILİN"){
-document.getElementById("adminPanel").style.display="block";
-countUsers();
-}
-}
+window.joinVoice = async(room)=>{
 
-async function countUsers(){
-const snapshot = await getDocs(collection(db,"users"));
-document.getElementById("totalUsers").innerText =
-"Toplam Hesap: " + snapshot.size;
+localStream = await navigator.mediaDevices.getUserMedia({audio:true});
+
+peerConnection = new RTCPeerConnection(servers);
+
+localStream.getTracks().forEach(track=>{
+peerConnection.addTrack(track,localStream);
+});
+
+peerConnection.ontrack = (event)=>{
+const audio = document.createElement("audio");
+audio.srcObject = event.streams[0];
+audio.autoplay = true;
+document.body.appendChild(audio);
+};
+
+peerConnection.onicecandidate = async(event=>{
+if(event.candidate){
+await setDoc(doc(db,"voiceRooms",room),{
+candidate:event.candidate.toJSON()
+});
 }
+});
+
+const offer = await peerConnection.createOffer();
+await peerConnection.setLocalDescription(offer);
+
+await setDoc(doc(db,"voiceRooms",room),{
+offer:offer
+});
+};
+
+window.leaveVoice = ()=>{
+if(localStream){
+localStream.getTracks().forEach(track=>track.stop());
+}
+if(peerConnection){
+peerConnection.close();
+}
+};
