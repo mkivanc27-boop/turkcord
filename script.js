@@ -62,28 +62,12 @@ msg.innerHTML=`<b>${data.user}</b><br>${data.text}`;
 div.appendChild(msg);
 });
 });
-const provider = new GoogleAuthProvider();
 
-window.googleLogin = async function(){
-  const provider = new GoogleAuthProvider();
-  await signInWithRedirect(auth, provider);
-};
-  try {
-    window.googleLogin = async function(){
-  const provider = new GoogleAuthProvider();
-  await signInWithRedirect(auth, provider);
-};
-  } catch(error){
     alert(error.message);
   }
 };
-getRedirectResult(auth).then((result) => {
   if(result?.user){
     console.log("Google login başarılı");
   }
 });
-const provider = new GoogleAuthProvider();
-
-window.googleLogin = async function(){
-  await signInWithRedirect(auth, provider);
-};
+;
