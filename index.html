@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Turkcord</title>
 <link rel="stylesheet" href="style.css">
@@ -9,53 +8,32 @@
 <body>
 
 <div id="auth">
-  <div class="auth-box" id="loginBox">
+<div class="auth-box">
+<h2>Turkcord</h2>
 
-    <h2>Login</h2>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Şifre">
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Şifre">
-
-    <button onclick="login()">Giriş</button>
-    <button onclick="register()">Kayıt</button>
-
-    <p class="small-text">
-      Hesabın yok mu?
-      <span onclick="showRegister()">Kayıt ol</span>
-    </p>
-
-  </div>
-
-  <div class="auth-box" id="registerBox" style="display:none;">
-
-    <h2>Kayıt</h2>
-
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPass" placeholder="Şifre">
-
-    <button onclick="register()">Kayıt Ol</button>
-
-    <p class="small-text">
-      Zaten hesabın var mı?
-      <span onclick="showLogin()">Giriş yap</span>
-    </p>
-
-  </div>
+<button onclick="register()">Kayıt</button>
+<button onclick="login()">Giriş</button>
+</div>
 </div>
 
-<div id="app" style="display:none;">
+<div id="chat" style="display:none;">
 
-<h2>Turkcord</h2>
+<h3>Text Chat</h3>
 
 <div id="messages"></div>
 
 <input id="messageInput" placeholder="Mesaj yaz...">
 <button onclick="sendMessage()">Gönder</button>
 
-<div id="adminPanel" style="display:none;">
-<h3>Admin Panel</h3>
-<div id="totalUsers"></div>
-</div>
+<hr>
+
+<h3>Voice Channels</h3>
+
+<button onclick="joinVoice('general')">Genel Oda</button>
+<button onclick="leaveVoice()">Voice'den Çık</button>
 
 </div>
 
