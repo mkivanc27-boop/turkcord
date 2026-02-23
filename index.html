@@ -1,16 +1,50 @@
-<div id="auth">
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turkcord</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<div id="auth">
   <div class="auth-box">
-    <h2>Turkcord</h2>
+    <h1>Turkcord</h1>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Şifre">
 
-    <div class="auth-buttons">
-      <button onclick="register()">Kayıt Ol</button>
-      <button onclick="login()">Giriş Yap</button>
+    <div class="btn-group">
+      <button onclick="register()">Kayıt</button>
+      <button onclick="login()">Giriş</button>
+    </div>
+
+  </div>
+</div>
+
+
+<div id="app" style="display:none;">
+
+  <div class="sidebar">
+    <h3>Sunucular</h3>
+    <div id="servers"></div>
+  </div>
+
+  <div class="chat">
+
+    <div id="messages"></div>
+
+    <div class="input-area">
+      <input id="messageInput" placeholder="Mesaj yaz...">
+      <button onclick="sendMessage()">Gönder</button>
     </div>
 
   </div>
 
 </div>
+
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
