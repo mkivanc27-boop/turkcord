@@ -95,3 +95,17 @@ background:#5865f2;
 color:white;
 cursor:pointer;
 }
+.google-btn {
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+background:white;
+color:black;
+font-weight:bold;
+}
+
+.google-btn img {
+width:18px;
+height:18px;
+}
