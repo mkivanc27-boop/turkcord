@@ -3,40 +3,64 @@ margin:0;
 font-family:sans-serif;
 background:#1e1f22;
 color:white;
-text-align:center;
 }
 
-.auth-box{
-margin-top:100px;
+.layout{
+display:flex;
+height:100vh;
+}
+
+.sidebar{
+width:250px;
 background:#2b2d31;
-padding:30px;
-display:inline-block;
-border-radius:15px;
-}
-
-input{
 padding:10px;
-margin:10px;
-border:none;
-border-radius:8px;
-width:220px;
+overflow-y:auto;
 }
 
-button{
-padding:8px 15px;
-margin:5px;
-border:none;
-border-radius:8px;
-background:#5865f2;
-color:white;
+.sidebar button{
+width:100%;
+margin-bottom:5px;
+}
+
+.sidebar div{
+padding:6px;
+background:#40444b;
+margin:4px 0;
+border-radius:6px;
 cursor:pointer;
 }
 
+.sidebar div:hover{
+background:#5865f2;
+}
+
+.chat{
+flex:1;
+padding:10px;
+display:flex;
+flex-direction:column;
+}
+
 #messages{
-height:250px;
+flex:1;
 overflow-y:auto;
 background:#2b2d31;
-margin:20px;
 padding:10px;
 border-radius:10px;
+}
+
+input{
+padding:8px;
+border-radius:6px;
+border:none;
+margin:5px 0;
+}
+
+button{
+padding:6px 10px;
+background:#5865f2;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
 }
