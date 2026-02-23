@@ -1,3 +1,37 @@
+#auth {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #2b2d31;
+}
+
+.auth-box {
+  background: #1e1f22;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+.auth-buttons button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #5865f2;
+  color: white;
+  cursor: pointer;
+}
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
