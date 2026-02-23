@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -15,36 +15,45 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentUser="";
+let currentUser = "";
 
-/* AUTH */
+/* ================= AUTH ================= */
 
 window.register = async()=>{
-const email=document.getElementById("email").value;
-const pass=document.getElementById("password").value;
+const email = document.getElementById("regEmail").value;
+const pass = document.getElementById("regPass").value;
 await createUserWithEmailAndPassword(auth,email,pass);
 };
 
 window.login = async()=>{
-const email=document.getElementById("email").value;
-const pass=document.getElementById("password").value;
+const email = document.getElementById("email").value;
+const pass = document.getElementById("password").value;
 await signInWithEmailAndPassword(auth,email,pass);
 };
 
-window.googleLogin = async()=>{
-const provider = new GoogleAuthProvider();
-await signInWithRedirect(auth, provider);
+window.showLogin = ()=>{
+document.getElementById("loginBox").style.display="block";
+document.getElementById("registerBox").style.display="none";
+};
+
+window.showRegister = ()=>{
+document.getElementById("loginBox").style.display="none";
+document.getElementById("registerBox").style.display="block";
 };
 
 onAuthStateChanged(auth,(user)=>{
 if(user){
 currentUser=user.email;
+
 document.getElementById("auth").style.display="none";
 document.getElementById("app").style.display="block";
+
+checkAdmin(user.email);
+loadMessages();
 }
 });
 
-/* CHAT */
+/* ================= CHAT ================= */
 
 window.sendMessage = async()=>{
 const input=document.getElementById("messageInput");
@@ -59,13 +68,29 @@ time:new Date()
 input.value="";
 };
 
+function loadMessages(){
 onSnapshot(collection(db,"messages"),(snap)=>{
 const div=document.getElementById("messages");
 div.innerHTML="";
+
 snap.forEach(doc=>{
 const data=doc.data();
-const msg=document.createElement("div");
-msg.innerHTML = `<b>${data.user}</b><br>${data.text}`;
-div.appendChild(msg);
+div.innerHTML += `<div><b>${data.user}</b><br>${data.text}</div><hr>`;
 });
 });
+}
+
+/* ================= ADMIN ================= */
+
+function checkAdmin(email){
+if(email === "BURAYA_ADMIN_EMAILİN"){
+document.getElementById("adminPanel").style.display="block";
+countUsers();
+}
+}
+
+async function countUsers(){
+const snapshot = await getDocs(collection(db,"users"));
+document.getElementById("totalUsers").innerText =
+"Toplam Hesap: " + snapshot.size;
+}
