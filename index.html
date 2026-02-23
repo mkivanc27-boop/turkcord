@@ -108,17 +108,17 @@ Zaten hesabın var mı?
 </div>
 
 
+<!-- 🔥 JAVASCRIPT -->
+
 <script type="module">
 
-/* 🔥 FIREBASE */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
 import {
 getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
-signOut
+signOut,
+onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
@@ -150,13 +150,13 @@ const db = getFirestore(app);
 /* ================= SCREEN SWITCH ================= */
 
 window.showRegister = ()=>{
-loginScreen.style.display="none";
-registerScreen.style.display="flex";
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("registerScreen").style.display="flex";
 };
 
 window.showLogin = ()=>{
-loginScreen.style.display="flex";
-registerScreen.style.display="none";
+document.getElementById("loginScreen").style.display="flex";
+document.getElementById("registerScreen").style.display="none";
 };
 
 
@@ -176,12 +176,10 @@ username:registerUsername.value,
 email:registerEmail.value
 });
 
-/* 🔥 OTOMATİK GEÇİŞ */
-loginScreen.style.display="none";
-registerScreen.style.display="none";
-app.style.display="block";
-
 alert("Kayıt Başarılı");
+
+document.getElementById("registerScreen").style.display="none";
+document.getElementById("app").style.display="block";
 
 }catch(err){
 alert("Register Hata:\n"+err.message);
@@ -200,12 +198,10 @@ loginEmail.value,
 loginPassword.value
 );
 
-/* 🔥 OTOMATİK GEÇİŞ */
-loginScreen.style.display="none";
-registerScreen.style.display="none";
-app.style.display="block";
-
 alert("Login Başarılı");
+
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("app").style.display="block";
 
 }catch(err){
 alert("Login Hata:\n"+err.message);
@@ -217,10 +213,8 @@ alert("Login Hata:\n"+err.message);
 
 window.logout = async()=>{
 await signOut(auth);
-
-app.style.display="none";
-loginScreen.style.display="flex";
-
+document.getElementById("app").style.display="none";
+document.getElementById("loginScreen").style.display="flex";
 };
 
 
@@ -241,7 +235,6 @@ serverName.value="";
 /* ================= LOAD SERVERS ================= */
 
 onSnapshot(collection(db,"servers"),snap=>{
-
 serverList.innerHTML="";
 
 snap.forEach(docSnap=>{
@@ -258,7 +251,6 @@ div.innerText=data.name;
 serverList.appendChild(div);
 
 });
-
 });
 
 </script>
