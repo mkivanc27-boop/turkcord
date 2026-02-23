@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurkCord V1</title>
+<title>TurkCord</title>
 
 <style>
 body{
@@ -11,8 +11,6 @@ background:#1e1f22;
 color:white;
 font-family:sans-serif;
 }
-
-/* LAYOUT */
 
 #appLayout{
 display:flex;
@@ -48,7 +46,7 @@ font-weight:bold;
 border:3px solid #00aaff;
 }
 
-/* CHANNEL AREA */
+/* CHANNEL PANEL */
 
 #channelPanel{
 width:250px;
@@ -65,11 +63,14 @@ border-radius:6px;
 cursor:pointer;
 }
 
+/* CHAT */
+
 #chatArea{
 flex:1;
 background:#1e1f22;
 padding:20px;
-overflow-y:auto;
+display:flex;
+flex-direction:column;
 }
 
 input{
@@ -93,7 +94,7 @@ cursor:pointer;
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 
 <div id="authScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
 
@@ -120,7 +121,7 @@ cursor:pointer;
 
 <button onclick="register()">Kayıt Ol</button>
 
-<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">Geri Dön</p>
+<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">Geri</p>
 
 </div>
 
@@ -139,21 +140,31 @@ cursor:pointer;
 </div>
 
 <div id="chatArea">
+
 <h2 id="selectedServerName">Server</h2>
-<div id="messages"></div>
+<h4 id="selectedChannelName"></h4>
+
+<div id="messageList" style="flex:1;overflow-y:auto;"></div>
+
+<div style="display:flex;gap:10px;">
+<input id="messageInput" placeholder="Mesaj yaz...">
+<button onclick="sendMessage()">Gönder</button>
 </div>
 
 </div>
 
+</div>
 </div>
 
 <script type="module">
 
+/* FIREBASE */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* 🔥 CONFIG */
+/* CONFIG */
 
 const firebaseConfig = {
 apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -169,29 +180,39 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let selectedServer = null;
+let selectedChannel = null;
 
 /* AUTH */
 
 window.login = async()=>{
-const email = loginEmail.value;
-const pass = loginPassword.value;
 
-await signInWithEmailAndPassword(auth,email,pass);
+await signInWithEmailAndPassword(
+auth,
+loginEmail.value,
+loginPassword.value
+);
 
 authScreen.style.display="none";
 app.style.display="block";
 
 loadServers();
+
 };
 
 window.register = async()=>{
-const user = await createUserWithEmailAndPassword(auth,registerEmail.value,registerPassword.value);
+
+const user = await createUserWithEmailAndPassword(
+auth,
+registerEmail.value,
+registerPassword.value
+);
 
 await setDoc(doc(db,"users",user.user.uid),{
 username:registerUsername.value
 });
 
 alert("Kayıt başarılı");
+
 };
 
 window.showRegister=()=>{
@@ -214,7 +235,7 @@ serverSidebar.innerHTML="";
 
 snap.forEach(docSnap=>{
 
-const data=docSnap.data();
+const data = docSnap.data();
 
 const div=document.createElement("div");
 div.className="serverCircle";
@@ -222,7 +243,8 @@ div.innerText=data.name.charAt(0);
 
 div.onclick=()=>{
 selectedServer=docSnap.id;
-document.getElementById("selectedServerName").innerText=data.name;
+selectedChannel=null;
+selectedServerName.innerText=data.name;
 loadChannels();
 };
 
@@ -230,11 +252,13 @@ serverSidebar.appendChild(div);
 
 });
 
-});
+/* + BUTTON */
 
-}
+const add=document.createElement("div");
+add.className="serverCircle";
+add.innerText="+";
 
-window.createServer=async()=>{
+add.onclick=async()=>{
 const name=prompt("Server adı");
 if(!name) return;
 
@@ -242,8 +266,13 @@ await addDoc(collection(db,"servers"),{
 name:name,
 owner:auth.currentUser.uid
 });
-
 };
+
+serverSidebar.appendChild(add);
+
+});
+
+}
 
 /* CHANNEL */
 
@@ -261,8 +290,6 @@ type:"text"
 
 function loadChannels(){
 
-if(!selectedServer) return;
-
 onSnapshot(collection(db,"servers",selectedServer,"channels"),snap=>{
 
 channelList.innerHTML="";
@@ -275,7 +302,59 @@ const div=document.createElement("div");
 div.className="channelItem";
 div.innerText="# "+data.name;
 
+div.onclick=()=>{
+selectedChannel=docSnap.id;
+selectedChannelName.innerText="# "+data.name;
+loadMessages();
+};
+
 channelList.appendChild(div);
+
+});
+
+});
+
+}
+
+/* CHAT */
+
+window.sendMessage=async()=>{
+
+if(!selectedServer || !selectedChannel) return;
+
+const text = messageInput.value;
+if(!text) return;
+
+await addDoc(
+collection(db,"servers",selectedServer,"channels",selectedChannel,"messages"),
+{
+text:text,
+sender:auth.currentUser.uid,
+time:Date.now()
+}
+);
+
+messageInput.value="";
+
+};
+
+function loadMessages(){
+
+onSnapshot(
+collection(db,"servers",selectedServer,"channels",selectedChannel,"messages"),
+snap=>{
+
+messageList.innerHTML="";
+
+snap.forEach(docSnap=>{
+
+const data=docSnap.data();
+
+const div=document.createElement("div");
+div.style.padding="6px";
+div.innerText=data.text;
+
+messageList.appendChild(div);
 
 });
 
