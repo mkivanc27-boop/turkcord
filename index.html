@@ -2,28 +2,78 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurkCord</title>
+<title>TurkCord V1</title>
 
 <style>
 body{
 margin:0;
-font-family:sans-serif;
 background:#1e1f22;
 color:white;
+font-family:sans-serif;
 }
 
-.screen{
+/* LAYOUT */
+
+#appLayout{
+display:flex;
 height:100vh;
+}
+
+/* SERVER SIDEBAR */
+
+#serverSidebar{
+width:80px;
+background:#111214;
 display:flex;
 flex-direction:column;
-justify-content:center;
 align-items:center;
+padding-top:10px;
 gap:10px;
+overflow-y:auto;
+}
+
+.serverCircle{
+width:50px;
+height:50px;
+border-radius:50%;
+background:#5865f2;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+font-weight:bold;
+}
+
+.serverCircle.active{
+border:3px solid #00aaff;
+}
+
+/* CHANNEL AREA */
+
+#channelPanel{
+width:250px;
+background:#2b2d31;
+padding:10px;
+overflow-y:auto;
+}
+
+.channelItem{
+padding:6px;
+background:#3a3c41;
+margin-top:6px;
+border-radius:6px;
+cursor:pointer;
+}
+
+#chatArea{
+flex:1;
+background:#1e1f22;
+padding:20px;
+overflow-y:auto;
 }
 
 input{
-padding:10px;
-width:250px;
+padding:8px;
 border-radius:6px;
 border:none;
 background:#2b2d31;
@@ -31,27 +81,21 @@ color:white;
 }
 
 button{
-padding:10px 15px;
+padding:8px 12px;
 border:none;
 border-radius:6px;
 background:#5865f2;
 color:white;
 cursor:pointer;
 }
-
-.link{
-color:#5865f2;
-cursor:pointer;
-font-size:14px;
-}
 </style>
 
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN SCREEN -->
 
-<div id="loginScreen" class="screen">
+<div id="authScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
 
 <h2>Login</h2>
 
@@ -60,18 +104,15 @@ font-size:14px;
 
 <button onclick="login()">Giriş</button>
 
-<div>
-Hesabın yok mu?
-<span class="link" onclick="showRegister()">Kayıt Ol</span>
-</div>
+<p>Hesabın yok mu? <span style="color:#5865f2;cursor:pointer;" onclick="showRegister()">Kayıt Ol</span></p>
 
 </div>
 
 <!-- REGISTER -->
 
-<div id="registerScreen" class="screen" style="display:none;">
+<div id="registerScreen" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
 
-<h2>Kayıt Ol</h2>
+<h2>Kayıt</h2>
 
 <input id="registerUsername" placeholder="Kullanıcı Adı">
 <input id="registerEmail" placeholder="Email">
@@ -79,146 +120,122 @@ Hesabın yok mu?
 
 <button onclick="register()">Kayıt Ol</button>
 
-<div>
-Zaten hesabın var mı?
-<span class="link" onclick="showLogin()">Giriş Yap</span>
-</div>
+<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">Geri Dön</p>
 
 </div>
 
 <!-- APP -->
 
-<div id="app" style="display:none; padding:20px;">
+<div id="app" style="display:none;">
 
-<h2>🎉 Giriş Başarılı</h2>
+<div id="appLayout">
 
-<button onclick="logout()">Logout</button>
+<div id="serverSidebar"></div>
 
-<hr>
+<div id="channelPanel">
+<h3>Kanallar</h3>
+<div id="channelList"></div>
+<button onclick="createChannel()">+ Kanal</button>
+</div>
 
-<h3>Server Oluştur</h3>
-
-<input id="serverName" placeholder="Server adı">
-<button onclick="createServer()">Oluştur</button>
-
-<div id="serverList"></div>
+<div id="chatArea">
+<h2 id="selectedServerName">Server</h2>
+<div id="messages"></div>
+</div>
 
 </div>
 
+</div>
 
 <script type="module">
 
-/* 🔥 FIREBASE */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-getFirestore,
-doc,
-setDoc,
-collection,
-addDoc,
-onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-
-/* 🔴 CONFIG */
+/* 🔥 CONFIG */
 
 const firebaseConfig = {
-apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
-authDomain: "turkcord-47b24.firebaseapp.com",
-projectId: "turkcord-47b24",
-storageBucket: "turkcord-47b24.firebasestorage.app",
-messagingSenderId: "474688300925",
-appId: "1:474688300925:web:75d8d4c690b92c7d438e14"
+apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+authDomain:"turkcord-47b24.firebaseapp.com",
+projectId:"turkcord-47b24",
+storageBucket:"turkcord-47b24.firebasestorage.app",
+messagingSenderId:"474688300925",
+appId:"1:474688300925:web:75d8d4c690b92c7d438e14"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let selectedServer = null;
 
-/* ================= SCREEN SWITCH ================= */
-
-window.showRegister = ()=>{
-document.getElementById("loginScreen").style.display="none";
-document.getElementById("registerScreen").style.display="flex";
-};
-
-window.showLogin = ()=>{
-document.getElementById("loginScreen").style.display="flex";
-document.getElementById("registerScreen").style.display="none";
-};
-
-
-/* ================= REGISTER ================= */
-
-window.register = async()=>{
-try{
-
-const username = document.getElementById("registerUsername").value;
-const email = document.getElementById("registerEmail").value;
-const password = document.getElementById("registerPassword").value;
-
-const user = await createUserWithEmailAndPassword(auth,email,password);
-
-await setDoc(doc(db,"users",user.user.uid),{
-username:username,
-email:email
-});
-
-alert("Kayıt Başarılı");
-
-document.getElementById("registerScreen").style.display="none";
-document.getElementById("app").style.display="block";
-
-}catch(err){
-alert("Register Hata:\n"+err.message);
-}
-};
-
-
-/* ================= LOGIN ================= */
+/* AUTH */
 
 window.login = async()=>{
-try{
+const email = loginEmail.value;
+const pass = loginPassword.value;
 
-const email = document.getElementById("loginEmail").value;
-const password = document.getElementById("loginPassword").value;
+await signInWithEmailAndPassword(auth,email,pass);
 
-await signInWithEmailAndPassword(auth,email,password);
+authScreen.style.display="none";
+app.style.display="block";
 
-alert("Login Başarılı");
+loadServers();
+};
 
-document.getElementById("loginScreen").style.display="none";
-document.getElementById("app").style.display="block";
+window.register = async()=>{
+const user = await createUserWithEmailAndPassword(auth,registerEmail.value,registerPassword.value);
 
-}catch(err){
-alert("Login Hata:\n"+err.message);
+await setDoc(doc(db,"users",user.user.uid),{
+username:registerUsername.value
+});
+
+alert("Kayıt başarılı");
+};
+
+window.showRegister=()=>{
+authScreen.style.display="none";
+registerScreen.style.display="flex";
+};
+
+window.showLogin=()=>{
+registerScreen.style.display="none";
+authScreen.style.display="flex";
+};
+
+/* SERVER */
+
+function loadServers(){
+
+onSnapshot(collection(db,"servers"),snap=>{
+
+serverSidebar.innerHTML="";
+
+snap.forEach(docSnap=>{
+
+const data=docSnap.data();
+
+const div=document.createElement("div");
+div.className="serverCircle";
+div.innerText=data.name.charAt(0);
+
+div.onclick=()=>{
+selectedServer=docSnap.id;
+document.getElementById("selectedServerName").innerText=data.name;
+loadChannels();
+};
+
+serverSidebar.appendChild(div);
+
+});
+
+});
+
 }
-};
 
-
-/* ================= LOGOUT ================= */
-
-window.logout = async()=>{
-await signOut(auth);
-
-document.getElementById("app").style.display="none";
-document.getElementById("loginScreen").style.display="flex";
-};
-
-
-/* ================= SERVER ================= */
-
-window.createServer = async()=>{
-const name = document.getElementById("serverName").value;
+window.createServer=async()=>{
+const name=prompt("Server adı");
 if(!name) return;
 
 await addDoc(collection(db,"servers"),{
@@ -226,29 +243,45 @@ name:name,
 owner:auth.currentUser.uid
 });
 
-document.getElementById("serverName").value="";
 };
 
+/* CHANNEL */
 
-/* ================= LOAD SERVERS ================= */
+window.createChannel=async()=>{
+if(!selectedServer) return;
 
-onSnapshot(collection(db,"servers"),snap=>{
-const serverList = document.getElementById("serverList");
-serverList.innerHTML="";
+const name=prompt("Kanal adı");
+if(!name) return;
+
+await addDoc(collection(db,"servers",selectedServer,"channels"),{
+name:name,
+type:"text"
+});
+};
+
+function loadChannels(){
+
+if(!selectedServer) return;
+
+onSnapshot(collection(db,"servers",selectedServer,"channels"),snap=>{
+
+channelList.innerHTML="";
 
 snap.forEach(docSnap=>{
-const data = docSnap.data();
+
+const data=docSnap.data();
 
 const div=document.createElement("div");
-div.style.background="#2b2d31";
-div.style.padding="8px";
-div.style.marginTop="6px";
-div.style.borderRadius="6px";
-div.innerText=data.name;
+div.className="channelItem";
+div.innerText="# "+data.name;
 
-serverList.appendChild(div);
+channelList.appendChild(div);
+
 });
+
 });
+
+}
 
 </script>
 
