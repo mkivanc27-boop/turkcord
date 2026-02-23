@@ -1,1 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Turkcord</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<div id="auth">
+  <div class="auth-box">
+    <h2>Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <button id="goRegister">Register</button>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+  <div id="servers"></div>
+  <div id="channels"></div>
+  <div id="chat">
+    <div id="messages"></div>
+    <div id="send">
+      <input id="messageInput">
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
