@@ -2,58 +2,193 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Turkcord</title>
-<link rel="stylesheet" href="style.css">
+<title>Platform</title>
+
+<style>
+
+/* ====== GLOBAL ====== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:system-ui;
+}
+
+body{
+background:#1e1f22;
+color:white;
+overflow:hidden;
+}
+
+/* ===== AUTH ===== */
+
+#auth{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:12px;
+background:#111214;
+}
+
+#auth input{
+width:280px;
+padding:10px;
+border-radius:8px;
+border:none;
+background:#2b2d31;
+color:white;
+}
+
+#auth button{
+width:280px;
+padding:10px;
+border:none;
+border-radius:8px;
+background:#5865f2;
+color:white;
+cursor:pointer;
+}
+
+/* ===== APP ===== */
+
+#app{
+display:flex;
+height:100vh;
+}
+
+/* SERVER BAR */
+
+.server-bar{
+width:72px;
+background:#111214;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:15px;
+gap:12px;
+}
+
+.server-icon{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#2b2d31;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.server-icon:hover{
+background:#5865f2;
+border-radius:35%;
+}
+
+/* CHAT */
+
+.chat{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+.chat-header{
+height:50px;
+background:#111214;
+display:flex;
+align-items:center;
+padding-left:15px;
+border-bottom:1px solid #2b2d31;
+}
+
+.messages{
+flex:1;
+padding:15px;
+overflow:auto;
+}
+
+.message{
+background:#2b2d31;
+padding:8px;
+border-radius:6px;
+margin-bottom:6px;
+}
+
+.chat-input{
+padding:10px;
+background:#111214;
+display:flex;
+gap:10px;
+}
+
+.chat-input input{
+flex:1;
+padding:10px;
+border-radius:6px;
+border:none;
+background:#2b2d31;
+color:white;
+}
+
+.chat-input button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#5865f2;
+color:white;
+cursor:pointer;
+}
+
+</style>
 </head>
 <body>
 
 <!-- AUTH -->
+
 <div id="auth">
+<h2>Login</h2>
 
-<h2>Turkcord</h2>
+<input placeholder="Email">
+<input placeholder="Password">
 
-<input type="text" id="username" placeholder="Kullanıcı Adı">
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Şifre">
-
-<button onclick="register()">Kayıt Ol</button>
-<button onclick="login()">Giriş Yap</button>
+<button>Giriş</button>
 
 </div>
 
 <!-- APP -->
+
 <div id="app" style="display:none;">
 
-<button onclick="logout()">Çıkış</button>
+<div class="server-bar">
 
-<h3>Sunucu Oluştur</h3>
-
-<input id="serverName" placeholder="Sunucu adı">
-<label>
-<input type="checkbox" id="serverPublic" checked>
-Public Server
-</label>
-
-<button onclick="createServer()">Oluştur</button>
-
-<hr>
-
-<h3>Sunucu Ara</h3>
-
-<input id="searchInput" placeholder="Sunucu ara">
-<button onclick="searchServer()">Ara</button>
-
-<div id="serverList"></div>
-
-<hr>
-
-<h3>Invite ile Katıl</h3>
-
-<input id="inviteInput" placeholder="Invite Code">
-<button onclick="joinByInvite()">Katıl</button>
+<div class="server-icon">S</div>
+<div class="server-icon">+</div>
 
 </div>
 
-<script type="module" src="script.js"></script>
+<div class="chat">
+
+<div class="chat-header">
+Server Name
+</div>
+
+<div class="messages">
+
+<div class="message">Test mesaj</div>
+
+</div>
+
+<div class="chat-input">
+<input placeholder="Mesaj yaz">
+<button>Gönder</button>
+</div>
+
+</div>
+
+</div>
+
 </body>
 </html>
