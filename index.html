@@ -116,31 +116,48 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ================= AUTH ================= */
+<!-- AUTH -->
 
-window.register = async()=>{
-try{
-await createUserWithEmailAndPassword(auth,email.value,password.value);
-alert("✅ Kayıt Başarılı");
-}
-catch(err){
-alert("❌ Register Hata:\n"+err.message);
-}
-};
+<div id="auth">
 
-window.login = async()=>{
-try{
-await signInWithEmailAndPassword(auth,email.value,password.value);
-alert("✅ Login Başarılı");
-}
-catch(err){
-alert("❌ Login Hata:\n"+err.message);
-}
-};
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+<h2>Login</h2>
 
-window.logout = async()=>{
-await signOut(auth);
-};
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Şifre">
+
+<button onclick="login()">Giriş Yap</button>
+
+<p style="margin-top:10px;font-size:14px;">
+Hesabın yok mu?
+<span onclick="showRegister()" style="color:#5865f2;cursor:pointer;">
+Hemen Kayıt Ol
+</span>
+</p>
+
+</div>
+
+<!-- REGISTER SCREEN -->
+<div id="registerScreen" style="display:none;">
+<h2>Kayıt Ol</h2>
+
+<input id="registerUsername" placeholder="Kullanıcı Adı">
+<input id="registerEmail" placeholder="Email">
+<input id="registerPassword" type="password" placeholder="Şifre">
+
+<button onclick="register()">Kayıt Ol</button>
+
+<p style="margin-top:10px;font-size:14px;">
+Zaten hesabın var mı?
+<span onclick="showLogin()" style="color:#5865f2;cursor:pointer;">
+Giriş Yap
+</span>
+</p>
+
+</div>
+
+</div>
 
 /* ================= UI ================= */
 
