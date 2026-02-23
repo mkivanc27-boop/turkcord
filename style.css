@@ -7,7 +7,7 @@ text-align:center;
 }
 
 .auth-box{
-margin-top:150px;
+margin-top:100px;
 background:#2b2d31;
 padding:30px;
 display:inline-block;
@@ -20,7 +20,7 @@ margin:10px auto;
 padding:10px;
 border:none;
 border-radius:8px;
-width:200px;
+width:220px;
 }
 
 button{
@@ -33,9 +33,15 @@ color:white;
 cursor:pointer;
 }
 
-.google-btn{
-background:white;
-color:black;
+.small-text{
+font-size:13px;
+margin-top:10px;
+}
+
+.small-text span{
+color:#5865f2;
+cursor:pointer;
+font-weight:bold;
 }
 
 #messages{
