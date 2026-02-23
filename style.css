@@ -1,33 +1,170 @@
-body{
+*{
 margin:0;
-font-family:sans-serif;
-background:#1e1f22;
-color:white;
-text-align:center;
+padding:0;
+box-sizing:border-box;
+font-family:system-ui,-apple-system,sans-serif;
 }
 
-input{
-padding:8px;
-margin:5px;
-border:none;
-border-radius:6px;
-background:#2b2d31;
+body{
+background:#0f0f13;
 color:white;
+overflow:hidden;
 }
 
-button{
-padding:8px 12px;
+/* AUTH */
+
+#auth{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:12px;
+background:linear-gradient(135deg,#1e1f26,#111);
+}
+
+#auth input{
+width:260px;
+padding:10px;
+border-radius:8px;
 border:none;
-border-radius:6px;
+background:#1c1d22;
+color:white;
+outline:none;
+transition:.2s;
+}
+
+#auth input:focus{
+border:1px solid #5865f2;
+}
+
+#auth button{
+width:260px;
+padding:10px;
+border:none;
+border-radius:8px;
 background:#5865f2;
 color:white;
 cursor:pointer;
+transition:.2s;
 }
 
-#serverList div{
-background:#2b2d31;
+#auth button:hover{
+background:#4752c4;
+transform:scale(1.03);
+}
+
+/* APP LAYOUT */
+
+#app{
+display:flex;
+height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:#111214;
+padding:15px;
+border-right:1px solid #1f1f23;
+overflow-y:auto;
+}
+
+.sidebar h3{
+opacity:0.7;
+font-size:14px;
+margin-bottom:10px;
+}
+
+.server-item{
+background:#1c1d22;
 padding:8px;
-margin:5px;
 border-radius:6px;
+margin-bottom:6px;
 cursor:pointer;
+transition:.2s;
+}
+
+.server-item:hover{
+background:#5865f2;
+transform:translateX(4px);
+}
+
+/* CHAT */
+
+.chat{
+flex:1;
+display:flex;
+flex-direction:column;
+background:#0f0f13;
+}
+
+.chat-header{
+padding:15px;
+background:#111214;
+border-bottom:1px solid #1f1f23;
+font-weight:bold;
+}
+
+.messages{
+flex:1;
+padding:15px;
+overflow-y:auto;
+}
+
+.message{
+background:#1c1d22;
+padding:10px;
+border-radius:8px;
+margin-bottom:8px;
+animation:fade .2s ease;
+}
+
+@keyframes fade{
+from{opacity:0; transform:translateY(5px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* INPUT */
+
+.chat-input{
+display:flex;
+padding:15px;
+background:#111214;
+border-top:1px solid #1f1f23;
+}
+
+.chat-input input{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:none;
+background:#1c1d22;
+color:white;
+outline:none;
+}
+
+.chat-input button{
+margin-left:10px;
+padding:10px 16px;
+border:none;
+border-radius:8px;
+background:#5865f2;
+color:white;
+cursor:pointer;
+transition:.2s;
+}
+
+.chat-input button:hover{
+background:#4752c4;
+}
+
+/* USER LIST */
+
+.user-panel{
+width:200px;
+background:#111214;
+padding:15px;
+border-left:1px solid #1f1f23;
 }
