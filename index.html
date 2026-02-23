@@ -155,12 +155,36 @@ alert("Register Hata:\n"+err.message);
 }
 
 };
+window.register = async()=>{
+try{
+
+const user = await createUserWithEmailAndPassword(
+auth,
+registerEmail.value,
+registerPassword.value
+);
+
+await setDoc(doc(db,"users",user.user.uid),{
+username:registerUsername.value,
+email:registerEmail.value
+});
+
+/* 🔥 OTOMATİK GEÇİŞ */
+loginScreen.style.display="none";
+registerScreen.style.display="none";
+app.style.display="block";
+
+alert("Kayıt Başarılı");
+
+}catch(err){
+alert("Register Hata:\n"+err.message);
+}
+};
 
 
 /* ================= LOGIN ================= */
 
 window.login = async()=>{
-
 try{
 
 await signInWithEmailAndPassword(
@@ -169,15 +193,14 @@ loginEmail.value,
 loginPassword.value
 );
 
+/* 🔥 ZORLA EKRAN GEÇİŞİ */
+loginScreen.style.display="none";
+registerScreen.style.display="none";
+app.style.display="block";
+
 alert("Login Başarılı");
 
 }catch(err){
 alert("Login Hata:\n"+err.message);
 }
-
 };
-
-</script>
-
-</body>
-</html>
