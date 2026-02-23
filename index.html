@@ -2,94 +2,32 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurkCord Final</title>
+<title>TurkCord PRO</title>
 
 <style>
 body{
 margin:0;
-background:#1e1f22;
+background:#0f0f12;
 color:white;
-font-family:sans-serif;
+font-family:Arial;
 }
 
 /* AUTH */
 
-.authBox{
+.auth{
 height:100vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 gap:10px;
-}
-
-/* LAYOUT */
-
-#appLayout{
-display:flex;
-height:100vh;
-}
-
-/* SERVER SIDEBAR */
-
-#servers{
-width:80px;
-background:#111214;
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:10px;
-padding-top:10px;
-overflow-y:auto;
-}
-
-.serverCircle{
-width:50px;
-height:50px;
-border-radius:50%;
-background:#5865f2;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-font-weight:bold;
-}
-
-.serverCircle.active{
-border:3px solid #00aaff;
-}
-
-/* CHANNEL */
-
-#channels{
-width:250px;
-background:#2b2d31;
-padding:10px;
-overflow-y:auto;
-}
-
-.channelItem{
-padding:6px;
-background:#3a3c41;
-margin-top:6px;
-border-radius:6px;
-cursor:pointer;
-}
-
-/* CHAT */
-
-#chat{
-flex:1;
-display:flex;
-flex-direction:column;
-padding:20px;
 }
 
 input{
 padding:8px;
 border-radius:6px;
 border:none;
-background:#2b2d31;
+background:#1c1c21;
 color:white;
 }
 
@@ -101,88 +39,152 @@ background:#5865f2;
 color:white;
 cursor:pointer;
 }
-</style>
 
+/* APP */
+
+#app{
+display:none;
+height:100vh;
+}
+
+/* LAYOUT */
+
+.layout{
+display:flex;
+height:100%;
+}
+
+/* SERVER SIDEBAR */
+
+#servers{
+width:70px;
+background:#111214;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:10px;
+gap:10px;
+overflow-y:auto;
+}
+
+.serverCircle{
+width:45px;
+height:45px;
+border-radius:50%;
+background:#5865f2;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* CHANNEL */
+
+#channels{
+width:230px;
+background:#1e1f22;
+padding:10px;
+overflow-y:auto;
+}
+
+/* CHAT */
+
+#chat{
+flex:1;
+display:flex;
+flex-direction:column;
+padding:15px;
+}
+
+#messages{
+flex:1;
+overflow-y:auto;
+}
+
+.message{
+padding:6px;
+background:#2b2d31;
+border-radius:6px;
+margin-bottom:6px;
+}
+
+/* FRIEND */
+
+.friendBox{
+background:#2b2d31;
+padding:6px;
+border-radius:6px;
+margin-bottom:5px;
+cursor:pointer;
+}
+</style>
 </head>
 <body>
 
-<!-- ================= AUTH ================= -->
+<!-- AUTH -->
 
-<div id="authScreen" class="authBox">
-
+<div id="auth" class="auth">
 <h2>Login</h2>
-
 <input id="loginEmail" placeholder="Email">
-<input id="loginPassword" type="password" placeholder="Şifre">
+<input id="loginPass" type="password" placeholder="Şifre">
 <button onclick="login()">Giriş</button>
-
-<p>
-Hesabın yok mu?
-<span onclick="showRegister()" style="color:#5865f2;cursor:pointer;">
-Kayıt Ol
-</span>
-</p>
-
+<p onclick="showRegister()" style="color:#5865f2;cursor:pointer;">Kayıt Ol</p>
 </div>
 
-<div id="registerScreen" class="authBox" style="display:none;">
-
+<div id="register" class="auth" style="display:none;">
 <h2>Kayıt</h2>
-
-<input id="registerUsername" placeholder="Kullanıcı Adı">
-<input id="registerEmail" placeholder="Email">
-<input id="registerPassword" type="password" placeholder="Şifre">
-
-<button onclick="register()">Kayıt Ol</button>
-
-<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">
-Geri
-</p>
-
+<input id="regUsername" placeholder="Nick">
+<input id="regEmail" placeholder="Email">
+<input id="regPass" type="password" placeholder="Şifre">
+<button onclick="register()">Kayıt</button>
+<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">Geri</p>
 </div>
 
-<!-- ================= APP ================= -->
+<!-- APP -->
 
-<div id="app" style="display:none;">
+<div id="app">
 
-<div id="appLayout">
+<div class="layout">
 
 <div id="servers"></div>
 
 <div id="channels">
-<h3>Kanallar</h3>
-<div id="channelList"></div>
-<button onclick="createChannel()">+ Kanal</button>
+<h3>Arkadaş</h3>
+<input id="friendNick" placeholder="Nick">
+<button onclick="sendFriendRequest()">Ekle</button>
+
+<h4>İstekler</h4>
+<div id="friendRequests"></div>
+
+<h4>Arkadaşlar</h4>
+<div id="friendList"></div>
 </div>
 
 <div id="chat">
 
-<h2 id="serverName">Server</h2>
-<h4 id="channelName"></h4>
-
-<div id="messages" style="flex:1;overflow-y:auto;"></div>
+<h2 id="chatTitle">TurkCord</h2>
+<div id="messages"></div>
 
 <div style="display:flex;gap:10px;">
-<input id="messageInput" placeholder="Mesaj yaz...">
+<input id="messageInput" placeholder="Mesaj yaz">
 <button onclick="sendMessage()">Gönder</button>
 </div>
 
 </div>
 
 </div>
-
 </div>
-
 <script type="module">
 
-/* FIREBASE */
+/* ================= FIREBASE ================= */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+apiKey:"API_KEY_YAZ",
 authDomain:"turkcord-47b24.firebaseapp.com",
 projectId:"turkcord-47b24",
 storageBucket:"turkcord-47b24.firebasestorage.app",
@@ -194,24 +196,43 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let selectedServer = null;
-let selectedChannel = null;
+let selectedServer=null;
+let selectedChannel=null;
+let selectedFriend=null;
 
 /* ================= AUTH ================= */
 
 window.register = async()=>{
 
-const user = await createUserWithEmailAndPassword(
-auth,
-registerEmail.value,
-registerPassword.value
+// Username unique kontrol
+
+const usernameCheck = await getDocs(
+query(collection(db,"usernames"),where("__name__","==",regUsername.value))
 );
 
+if(!usernameCheck.empty){
+alert("Username alınmış ❌");
+return;
+}
+
+const user = await createUserWithEmailAndPassword(
+auth,
+regEmail.value,
+regPass.value
+);
+
+// users
 await setDoc(doc(db,"users",user.user.uid),{
-username:registerUsername.value
+username:regUsername.value,
+email:regEmail.value
 });
 
-alert("Kayıt başarılı");
+// usernames
+await setDoc(doc(db,"usernames",regUsername.value),{
+uid:user.user.uid
+});
+
+alert("Kayıt başarılı ✅");
 
 };
 
@@ -220,27 +241,50 @@ window.login = async()=>{
 await signInWithEmailAndPassword(
 auth,
 loginEmail.value,
-loginPassword.value
+loginPass.value
 );
 
-authScreen.style.display="none";
+auth.style.display="none";
+register.style.display="none";
 app.style.display="block";
 
 loadServers();
+loadFriends();
 
+};
+
+window.logout = async()=>{
+await signOut(auth);
+location.reload();
 };
 
 window.showRegister=()=>{
-authScreen.style.display="none";
-registerScreen.style.display="flex";
+auth.style.display="none";
+register.style.display="flex";
 };
 
 window.showLogin=()=>{
-registerScreen.style.display="none";
-authScreen.style.display="flex";
+register.style.display="none";
+auth.style.display="flex";
 };
 
-/* ================= SERVERS ================= */
+/* ================= GLOBAL ADMIN CHECK ================= */
+
+let isAdmin=false;
+
+async function checkAdmin(){
+
+const snap = await getDocs(collection(db,"globalAdmins"));
+
+snap.forEach(docSnap=>{
+if(docSnap.id === auth.currentUser.uid){
+isAdmin=true;
+}
+});
+
+}
+
+/* ================= SERVER ================= */
 
 function loadServers(){
 
@@ -258,7 +302,7 @@ div.innerText=data.name.charAt(0);
 
 div.onclick=()=>{
 selectedServer=docSnap.id;
-serverName.innerText=data.name;
+chatTitle.innerText=data.name;
 loadChannels();
 };
 
@@ -266,13 +310,14 @@ servers.appendChild(div);
 
 });
 
-/* + */
+/* CREATE SERVER BUTTON */
 
 const add=document.createElement("div");
 add.className="serverCircle";
 add.innerText="+";
 
 add.onclick=async()=>{
+
 const name=prompt("Server adı");
 if(!name) return;
 
@@ -280,6 +325,7 @@ await addDoc(collection(db,"servers"),{
 name:name,
 owner:auth.currentUser.uid
 });
+
 };
 
 servers.appendChild(add);
@@ -290,39 +336,26 @@ servers.appendChild(add);
 
 /* ================= CHANNEL ================= */
 
-window.createChannel=async()=>{
-if(!selectedServer) return;
-
-const name=prompt("Kanal adı");
-if(!name) return;
-
-await addDoc(collection(db,"servers",selectedServer,"channels"),{
-name:name
-});
-
-};
-
 function loadChannels(){
 
 onSnapshot(collection(db,"servers",selectedServer,"channels"),snap=>{
 
-channelList.innerHTML="";
+channels.innerHTML="";
 
 snap.forEach(docSnap=>{
 
 const data=docSnap.data();
 
 const div=document.createElement("div");
-div.className="channelItem";
+div.className="friendBox";
 div.innerText="# "+data.name;
 
 div.onclick=()=>{
 selectedChannel=docSnap.id;
-channelName.innerText="# "+data.name;
 loadMessages();
 };
 
-channelList.appendChild(div);
+channels.appendChild(div);
 
 });
 
@@ -330,19 +363,14 @@ channelList.appendChild(div);
 
 }
 
-/* ================= CHAT ================= */
-
 window.sendMessage=async()=>{
 
 if(!selectedServer || !selectedChannel) return;
 
-const text=messageInput.value;
-if(!text) return;
-
 await addDoc(
 collection(db,"servers",selectedServer,"channels",selectedChannel,"messages"),
 {
-text:text,
+text:messageInput.value,
 sender:auth.currentUser.uid,
 time:Date.now()
 }
@@ -365,7 +393,7 @@ snap.forEach(docSnap=>{
 const data=docSnap.data();
 
 const div=document.createElement("div");
-div.style.padding="6px";
+div.className="message";
 div.innerText=data.text;
 
 messages.appendChild(div);
@@ -376,6 +404,159 @@ messages.appendChild(div);
 
 }
 
+/* ================= FRIEND SYSTEM ================= */
+
+window.sendFriendRequest = async()=>{
+
+const nick = friendNick.value;
+
+const q = query(collection(db,"users"),where("username","==",nick));
+const snap = await getDocs(q);
+
+if(snap.empty){
+alert("Kullanıcı bulunamadı");
+return;
+}
+
+const targetUID = snap.docs[0].id;
+
+await addDoc(collection(db,"friendRequests"),{
+from:auth.currentUser.uid,
+to:targetUID,
+status:"pending"
+});
+
+};
+
+function loadFriends(){
+
+onSnapshot(collection(db,"friendRequests"),snap=>{
+
+friendRequests.innerHTML="";
+friendList.innerHTML="";
+
+snap.forEach(docSnap=>{
+
+const data=docSnap.data();
+
+/* REQUEST */
+
+if(data.to===auth.currentUser.uid && data.status==="pending"){
+
+const div=document.createElement("div");
+div.className="friendBox";
+div.innerHTML=`
+<p>${data.from}</p>
+<button onclick="acceptFriend('${docSnap.id}','${data.from}')">✔</button>
+<button onclick="rejectFriend('${docSnap.id}')">✖</button>
+`;
+
+friendRequests.appendChild(div);
+
+}
+
+/* FRIEND LIST */
+
+if(data.status==="accepted"){
+
+if(data.from===auth.currentUser.uid || data.to===auth.currentUser.uid){
+
+const friendId = data.from===auth.currentUser.uid ? data.to : data.from;
+
+const div=document.createElement("div");
+div.className="friendBox";
+div.innerText="💙 "+friendId;
+
+div.onclick=()=>{
+selectedFriend=friendId;
+chatTitle.innerText="DM - "+friendId;
+loadDM();
+};
+
+friendList.appendChild(div);
+
+}
+
+}
+
+});
+
+});
+
+}
+
+window.acceptFriend=async(id,from)=>{
+
+await setDoc(doc(db,"friendRequests",id),{
+status:"accepted"
+},{merge:true});
+
+await setDoc(doc(db,"friends",auth.currentUser.uid),{
+list:[from]
+},{merge:true});
+
+await setDoc(doc(db,"friends",from),{
+list:[auth.currentUser.uid]
+},{merge:true});
+
+};
+
+window.rejectFriend=async(id)=>{
+await setDoc(doc(db,"friendRequests",id),{
+status:"rejected"
+},{merge:true});
+};
+
+/* ================= DM ================= */
+
+window.sendDM=async()=>{
+
+if(!selectedFriend) return;
+
+await addDoc(collection(db,"dms"),{
+from:auth.currentUser.uid,
+to:selectedFriend,
+text:messageInput.value,
+time:Date.now()
+});
+
+messageInput.value="";
+
+};
+
+function loadDM(){
+
+onSnapshot(collection(db,"dms"),snap=>{
+
+messages.innerHTML="";
+
+snap.forEach(docSnap=>{
+
+const data=docSnap.data();
+
+if(
+(data.from===auth.currentUser.uid && data.to===selectedFriend) ||
+(data.to===auth.currentUser.uid && data.from===selectedFriend)
+){
+
+const div=document.createElement("div");
+div.className="message";
+div.innerText=data.text;
+
+messages.appendChild(div);
+
+}
+
+});
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
 </script>
 
 </body>
