@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurkCord</title>
+<title>TurkCord Final</title>
 
 <style>
 body{
@@ -12,6 +12,19 @@ color:white;
 font-family:sans-serif;
 }
 
+/* AUTH */
+
+.authBox{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:10px;
+}
+
+/* LAYOUT */
+
 #appLayout{
 display:flex;
 height:100vh;
@@ -19,14 +32,14 @@ height:100vh;
 
 /* SERVER SIDEBAR */
 
-#serverSidebar{
+#servers{
 width:80px;
 background:#111214;
 display:flex;
 flex-direction:column;
 align-items:center;
-padding-top:10px;
 gap:10px;
+padding-top:10px;
 overflow-y:auto;
 }
 
@@ -46,9 +59,9 @@ font-weight:bold;
 border:3px solid #00aaff;
 }
 
-/* CHANNEL PANEL */
+/* CHANNEL */
 
-#channelPanel{
+#channels{
 width:250px;
 background:#2b2d31;
 padding:10px;
@@ -65,12 +78,11 @@ cursor:pointer;
 
 /* CHAT */
 
-#chatArea{
+#chat{
 flex:1;
-background:#1e1f22;
-padding:20px;
 display:flex;
 flex-direction:column;
+padding:20px;
 }
 
 input{
@@ -94,24 +106,26 @@ cursor:pointer;
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ================= AUTH ================= -->
 
-<div id="authScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
+<div id="authScreen" class="authBox">
 
 <h2>Login</h2>
 
 <input id="loginEmail" placeholder="Email">
 <input id="loginPassword" type="password" placeholder="Şifre">
-
 <button onclick="login()">Giriş</button>
 
-<p>Hesabın yok mu? <span style="color:#5865f2;cursor:pointer;" onclick="showRegister()">Kayıt Ol</span></p>
+<p>
+Hesabın yok mu?
+<span onclick="showRegister()" style="color:#5865f2;cursor:pointer;">
+Kayıt Ol
+</span>
+</p>
 
 </div>
 
-<!-- REGISTER -->
-
-<div id="registerScreen" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;">
+<div id="registerScreen" class="authBox" style="display:none;">
 
 <h2>Kayıt</h2>
 
@@ -121,30 +135,32 @@ cursor:pointer;
 
 <button onclick="register()">Kayıt Ol</button>
 
-<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">Geri</p>
+<p onclick="showLogin()" style="color:#5865f2;cursor:pointer;">
+Geri
+</p>
 
 </div>
 
-<!-- APP -->
+<!-- ================= APP ================= -->
 
 <div id="app" style="display:none;">
 
 <div id="appLayout">
 
-<div id="serverSidebar"></div>
+<div id="servers"></div>
 
-<div id="channelPanel">
+<div id="channels">
 <h3>Kanallar</h3>
 <div id="channelList"></div>
 <button onclick="createChannel()">+ Kanal</button>
 </div>
 
-<div id="chatArea">
+<div id="chat">
 
-<h2 id="selectedServerName">Server</h2>
-<h4 id="selectedChannelName"></h4>
+<h2 id="serverName">Server</h2>
+<h4 id="channelName"></h4>
 
-<div id="messageList" style="flex:1;overflow-y:auto;"></div>
+<div id="messages" style="flex:1;overflow-y:auto;"></div>
 
 <div style="display:flex;gap:10px;">
 <input id="messageInput" placeholder="Mesaj yaz...">
@@ -154,6 +170,7 @@ cursor:pointer;
 </div>
 
 </div>
+
 </div>
 
 <script type="module">
@@ -161,10 +178,8 @@ cursor:pointer;
 /* FIREBASE */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-/* CONFIG */
 
 const firebaseConfig = {
 apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -182,22 +197,7 @@ const db = getFirestore(app);
 let selectedServer = null;
 let selectedChannel = null;
 
-/* AUTH */
-
-window.login = async()=>{
-
-await signInWithEmailAndPassword(
-auth,
-loginEmail.value,
-loginPassword.value
-);
-
-authScreen.style.display="none";
-app.style.display="block";
-
-loadServers();
-
-};
+/* ================= AUTH ================= */
 
 window.register = async()=>{
 
@@ -215,6 +215,21 @@ alert("Kayıt başarılı");
 
 };
 
+window.login = async()=>{
+
+await signInWithEmailAndPassword(
+auth,
+loginEmail.value,
+loginPassword.value
+);
+
+authScreen.style.display="none";
+app.style.display="block";
+
+loadServers();
+
+};
+
 window.showRegister=()=>{
 authScreen.style.display="none";
 registerScreen.style.display="flex";
@@ -225,17 +240,17 @@ registerScreen.style.display="none";
 authScreen.style.display="flex";
 };
 
-/* SERVER */
+/* ================= SERVERS ================= */
 
 function loadServers(){
 
 onSnapshot(collection(db,"servers"),snap=>{
 
-serverSidebar.innerHTML="";
+servers.innerHTML="";
 
 snap.forEach(docSnap=>{
 
-const data = docSnap.data();
+const data=docSnap.data();
 
 const div=document.createElement("div");
 div.className="serverCircle";
@@ -243,16 +258,15 @@ div.innerText=data.name.charAt(0);
 
 div.onclick=()=>{
 selectedServer=docSnap.id;
-selectedChannel=null;
-selectedServerName.innerText=data.name;
+serverName.innerText=data.name;
 loadChannels();
 };
 
-serverSidebar.appendChild(div);
+servers.appendChild(div);
 
 });
 
-/* + BUTTON */
+/* + */
 
 const add=document.createElement("div");
 add.className="serverCircle";
@@ -268,13 +282,13 @@ owner:auth.currentUser.uid
 });
 };
 
-serverSidebar.appendChild(add);
+servers.appendChild(add);
 
 });
 
 }
 
-/* CHANNEL */
+/* ================= CHANNEL ================= */
 
 window.createChannel=async()=>{
 if(!selectedServer) return;
@@ -283,9 +297,9 @@ const name=prompt("Kanal adı");
 if(!name) return;
 
 await addDoc(collection(db,"servers",selectedServer,"channels"),{
-name:name,
-type:"text"
+name:name
 });
+
 };
 
 function loadChannels(){
@@ -304,7 +318,7 @@ div.innerText="# "+data.name;
 
 div.onclick=()=>{
 selectedChannel=docSnap.id;
-selectedChannelName.innerText="# "+data.name;
+channelName.innerText="# "+data.name;
 loadMessages();
 };
 
@@ -316,13 +330,13 @@ channelList.appendChild(div);
 
 }
 
-/* CHAT */
+/* ================= CHAT ================= */
 
 window.sendMessage=async()=>{
 
 if(!selectedServer || !selectedChannel) return;
 
-const text = messageInput.value;
+const text=messageInput.value;
 if(!text) return;
 
 await addDoc(
@@ -344,7 +358,7 @@ onSnapshot(
 collection(db,"servers",selectedServer,"channels",selectedChannel,"messages"),
 snap=>{
 
-messageList.innerHTML="";
+messages.innerHTML="";
 
 snap.forEach(docSnap=>{
 
@@ -354,7 +368,7 @@ const div=document.createElement("div");
 div.style.padding="6px";
 div.innerText=data.text;
 
-messageList.appendChild(div);
+messages.appendChild(div);
 
 });
 
