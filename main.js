@@ -270,3 +270,230 @@ deleteAccountBtn.onclick = async () => {
   await deleteUser(currentUser);
   alert("Account deleted");
 };
+/* =========================
+   ADMIN SYSTEM
+========================= */
+
+serverBanBtn.onclick = async () => {
+  const uid = adminUidInput.value;
+  if (!uid) return;
+
+  await setDoc(doc(db, "serverBans", currentServer + "_" + uid), {
+    uid,
+    serverId: currentServer
+  });
+
+  alert("Server banned");
+};
+
+serverUnbanBtn.onclick = async () => {
+  const uid = adminUidInput.value;
+  if (!uid) return;
+
+  await deleteDoc(doc(db, "serverBans", currentServer + "_" + uid));
+  alert("Server unbanned");
+};
+
+globalBanBtn.onclick = async () => {
+  if (!isGlobalAdmin) return alert("Only global admin");
+
+  const uid = adminUidInput.value;
+  if (!uid) return;
+
+  await setDoc(doc(db, "globalBans", uid), { uid });
+  alert("Globally banned");
+};
+
+globalUnbanBtn.onclick = async () => {
+  if (!isGlobalAdmin) return alert("Only global admin");
+
+  const uid = adminUidInput.value;
+  if (!uid) return;
+
+  await deleteDoc(doc(db, "globalBans", uid));
+  alert("Global unbanned");
+};
+
+kickBtn.onclick = async () => {
+  const uid = adminUidInput.value;
+  if (!uid) return;
+
+  const serverDoc = await getDoc(doc(db, "servers", currentServer));
+  const data = serverDoc.data();
+
+  const newMembers = data.members.filter(m => m !== uid);
+
+  await updateDoc(doc(db, "servers", currentServer), {
+    members: newMembers
+  });
+
+  alert("User kicked");
+};
+
+makeAdminBtn.onclick = async () => {
+  const uid = adminUidInput.value;
+  if (!uid) return;
+
+  const serverRef = doc(db, "servers", currentServer);
+  const serverDoc = await getDoc(serverRef);
+  const data = serverDoc.data();
+
+  data.roles[uid] = "admin";
+
+  await updateDoc(serverRef, {
+    roles: data.roles
+  });
+
+  alert("Admin given");
+};
+
+/* =========================
+   FRIEND SYSTEM
+========================= */
+
+addFriendBtn.onclick = async () => {
+  const uname = prompt("Friend username?");
+  if (!uname) return;
+
+  const nameDoc = await getDoc(doc(db, "usernames", uname));
+  if (!nameDoc.exists()) return alert("User not found");
+
+  const uid = nameDoc.data().uid;
+
+  await setDoc(doc(db, "friends", currentUser.uid + "_" + uid), {
+    users: [currentUser.uid, uid]
+  });
+
+  alert("Friend added");
+};
+
+function loadFriends() {
+  const q = query(
+    collection(db, "friends"),
+    where("users", "array-contains", currentUser.uid)
+  );
+
+  onSnapshot(q, (snap) => {
+    friendList.innerHTML = "";
+    snap.forEach((docSnap) => {
+      const users = docSnap.data().users;
+      const other = users.find(u => u !== currentUser.uid);
+
+      const div = document.createElement("div");
+      div.innerText = other;
+      div.onclick = () => openDM(other);
+
+      friendList.appendChild(div);
+    });
+  });
+}
+
+/* =========================
+   DM SYSTEM
+========================= */
+
+function openDM(otherUid) {
+  currentChannel = null;
+  chatHeader.innerText = "DM";
+
+  const dmId = [currentUser.uid, otherUid].sort().join("_");
+
+  const q = query(
+    collection(db, "dms"),
+    where("dmId", "==", dmId),
+    orderBy("timestamp")
+  );
+
+  onSnapshot(q, (snap) => {
+    messages.innerHTML = "";
+    snap.forEach((docSnap) => {
+      const data = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "message";
+      div.innerHTML = `<span class="username">${data.username}:</span> ${data.text}`;
+      messages.appendChild(div);
+    });
+  });
+
+  sendBtn.onclick = async () => {
+    const text = messageInput.value;
+    if (!text) return;
+
+    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+
+    await addDoc(collection(db, "dms"), {
+      dmId,
+      text,
+      username: userDoc.data().username,
+      timestamp: Date.now()
+    });
+
+    messageInput.value = "";
+  };
+}
+
+/* =========================
+   TYPING SYSTEM
+========================= */
+
+messageInput.oninput = async () => {
+  if (!currentChannel) return;
+
+  await setDoc(doc(db, "typing", currentChannel + "_" + currentUser.uid), {
+    channelId: currentChannel,
+    username: currentUser.uid
+  });
+};
+
+function loadTyping() {
+  const q = query(
+    collection(db, "typing"),
+    where("channelId", "==", currentChannel)
+  );
+
+  onSnapshot(q, (snap) => {
+    typingIndicator.innerText = snap.size > 0 ? "Someone typing..." : "";
+  });
+}
+
+/* =========================
+   ONLINE STATUS
+========================= */
+
+window.addEventListener("beforeunload", async () => {
+  if (currentUser)
+    await updateDoc(doc(db, "users", currentUser.uid), { online: false });
+});
+
+/* =========================
+   INVITE BY USERNAME
+========================= */
+
+async function inviteUser() {
+  const uname = prompt("Username to invite?");
+  if (!uname) return;
+
+  const nameDoc = await getDoc(doc(db, "usernames", uname));
+  if (!nameDoc.exists()) return alert("User not found");
+
+  const uid = nameDoc.data().uid;
+
+  const serverRef = doc(db, "servers", currentServer);
+  const serverDoc = await getDoc(serverRef);
+  const data = serverDoc.data();
+
+  if (!data.members.includes(uid)) {
+    data.members.push(uid);
+  }
+
+  await updateDoc(serverRef, {
+    members: data.members
+  });
+
+  alert("Invited");
+}
+
+/* Load friends after login */
+onAuthStateChanged(auth, (user) => {
+  if (user) loadFriends();
+});
