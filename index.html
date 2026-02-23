@@ -1,38 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="auth">
-<input id="user" placeholder="User">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
+<button onclick="register()">Register</button>
 </div>
 
 <div id="app" style="display:none;">
-<h2>Giriş Başarılı</h2>
+
+<div class="sidebar">
+<h3>Servers</h3>
+<input id="serverName" placeholder="Server adı">
+<button onclick="createServer()">Create</button>
+<div id="serverList"></div>
+
+<h3>Channels</h3>
+<input id="channelName" placeholder="Channel">
+<button onclick="createChannel()">Channel</button>
+<div id="channelList"></div>
 </div>
 
-<script>
+<div class="chat">
 
-function login(){
-let u=document.getElementById("user").value;
+<div id="messages" class="messages"></div>
 
-if(u){
-localStorage.setItem("logged","1");
-document.getElementById("auth").style.display="none";
-document.getElementById("app").style.display="block";
-}
-}
+<div class="input">
+<input id="messageInput">
+<button onclick="sendMessage()">Send</button>
+</div>
 
-if(localStorage.getItem("logged")){
-document.getElementById("auth").style.display="none";
-document.getElementById("app").style.display="block";
-}
+</div>
 
-</script>
+</div>
 
+<script type="module" src="app.js"></script>
 </body>
 </html>
