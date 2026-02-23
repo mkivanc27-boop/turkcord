@@ -10,43 +10,29 @@
 
 <div id="auth">
   <div class="auth-box">
-    <h1>Turkcord</h1>
+    <h2>Turkcord</h2>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Şifre">
 
-    <div class="btn-group">
-      <button onclick="register()">Kayıt</button>
-      <button onclick="login()">Giriş</button>
-    </div>
-<button class="google-icon" onclick="googleLogin()">
-  <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg">
-</button>
-</button>
+    <button onclick="register()">Kayıt</button>
+    <button onclick="login()">Giriş</button>
+
+    <button onclick="googleLogin()" class="google-btn">
+      Google ile Giriş
+    </button>
+
   </div>
 </div>
-
 
 <div id="app" style="display:none;">
+  <div id="messages"></div>
 
-  <div class="sidebar">
-    <h3>Sunucular</h3>
-    <div id="servers"></div>
+  <div>
+    <input id="messageInput" placeholder="Mesaj yaz...">
+    <button onclick="sendMessage()">Gönder</button>
   </div>
-
-  <div class="chat">
-
-    <div id="messages"></div>
-
-    <div class="input-area">
-      <input id="messageInput" placeholder="Mesaj yaz...">
-      <button onclick="sendMessage()">Gönder</button>
-    </div>
-
-  </div>
-
 </div>
-
 
 <script type="module" src="script.js"></script>
 </body>
