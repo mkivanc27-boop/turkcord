@@ -1,62 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Turkcord</title>
-<link rel="stylesheet" href="style.css">
+<title>Test App</title>
 </head>
 <body>
 
-<!-- AUTH -->
-<div id="auth">
-  <div class="auth-box">
+<input id="email" placeholder="Email">
+<input id="password" placeholder="Password">
 
-    <h2>Turkcord</h2>
-
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Şifre">
-
-    <button onclick="handleRegister()">Kayıt</button>
-    <button onclick="handleLogin()">Giriş</button>
-
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app" style="display:none;">
-
-<div class="layout">
-
-<div class="sidebar">
-<h3>Sunucular</h3>
-<input id="serverName" placeholder="Sunucu adı">
-<button onclick="createServer()">Sunucu Kur</button>
-<div id="serverList"></div>
-
-<hr>
-
-<h3>Arkadaş</h3>
-<input id="friendEmail" placeholder="Arkadaş Email">
-<button onclick="addFriend()">Arkadaş Ekle</button>
-<div id="friendList"></div>
-</div>
-
-<div class="chat">
-
-<h3 id="currentServerTitle">Chat</h3>
-
-<div id="messages"></div>
-
-<input id="messageInput" placeholder="Mesaj yaz...">
-<button onclick="sendMessage()">Gönder</button>
-
-<button onclick="joinVoice('voice1')">🎙 Voice</button>
-
-</div>
-
-</div>
-</div>
+<button onclick="register()">Kayıt</button>
+<button onclick="login()">Giriş</button>
 
 <script type="module" src="script.js"></script>
+
 </body>
 </html>
