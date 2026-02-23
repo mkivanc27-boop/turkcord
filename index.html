@@ -10,31 +10,53 @@
 <div id="auth">
 <div class="auth-box">
 <h2>Turkcord</h2>
-
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Şifre">
-
 <button onclick="register()">Kayıt</button>
 <button onclick="login()">Giriş</button>
 </div>
 </div>
 
-<div id="chat" style="display:none;">
+<div id="app" style="display:none;">
 
-<h3>Text Chat</h3>
+<div class="layout">
 
-<div id="messages"></div>
+<!-- LEFT SIDEBAR -->
+<div class="sidebar">
 
-<input id="messageInput" placeholder="Mesaj yaz...">
-<button onclick="sendMessage()">Gönder</button>
+<h3>Sunucular</h3>
+
+<input id="serverName" placeholder="Sunucu adı">
+<button onclick="createServer()">Sunucu Kur</button>
+
+<div id="serverList"></div>
 
 <hr>
 
-<h3>Voice Channels</h3>
+<h3>Arkadaş</h3>
 
-<button onclick="joinVoice('general')">Genel Oda</button>
-<button onclick="leaveVoice()">Voice'den Çık</button>
+<input id="friendEmail" placeholder="Arkadaş Email">
+<button onclick="addFriend()">Arkadaş Ekle</button>
 
+<div id="friendList"></div>
+
+</div>
+
+<!-- CHAT -->
+<div class="chat">
+
+<h3 id="currentServerTitle">Chat</h3>
+
+<div id="messages"></div>
+
+<input id="messageInput">
+<button onclick="sendMessage()">Gönder</button>
+
+<button onclick="joinVoice()">🎙 Voice</button>
+
+</div>
+
+</div>
 </div>
 
 <script type="module" src="script.js"></script>
