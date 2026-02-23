@@ -7,28 +7,45 @@
 </head>
 <body>
 
-<div id="auth">
-  <div class="auth-box">
-    <h2>Login</h2>
+<div id="authScreen">
+  <div class="authBox">
+    <h2>Turkcord</h2>
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
+    <input id="username" placeholder="Username (Register only)">
     <button id="loginBtn">Login</button>
-    <button id="goRegister">Register</button>
+    <button id="registerBtn">Register</button>
   </div>
 </div>
 
-<div id="app" style="display:none;">
-  <div id="servers"></div>
-  <div id="channels"></div>
+<div id="appScreen" style="display:none;">
+
+  <div id="servers">
+    <div id="serverList"></div>
+    <button id="createServerBtn">+</button>
+  </div>
+
+  <div id="channels">
+    <h3 id="serverName"></h3>
+    <div id="channelList"></div>
+    <button id="createChannelBtn">+ Channel</button>
+    <hr>
+    <button id="friendsBtn">Friends</button>
+    <button id="dmBtn">DM</button>
+  </div>
+
   <div id="chat">
+    <div id="chatHeader"></div>
     <div id="messages"></div>
-    <div id="send">
+    <div id="messageBox">
       <input id="messageInput">
       <button id="sendBtn">Send</button>
     </div>
   </div>
+
 </div>
 
 <script type="module" src="app.js"></script>
+
 </body>
 </html>
