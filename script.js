@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstati
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey: "BURAYA_API_KEY",
+apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
 authDomain: "turkcord-47b24.firebaseapp.com",
 projectId: "turkcord-47b24",
 storageBucket: "turkcord-47b24.firebasestorage.app",
