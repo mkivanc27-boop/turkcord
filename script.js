@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey:"API_KEYİN",
+apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
 authDomain:"turkcord-47b24.firebaseapp.com",
 projectId:"turkcord-47b24",
 storageBucket:"turkcord-47b24.firebasestorage.app",
@@ -20,27 +20,35 @@ let currentServer="";
 
 /* ================= AUTH ================= */
 
-window.register=async()=>{
+window.handleRegister = async () => {
+try{
 await createUserWithEmailAndPassword(auth,email.value,password.value);
+}catch(err){
+alert(err.message);
+}
 };
 
-window.login=async()=>{
+window.handleLogin = async () => {
+try{
 await signInWithEmailAndPassword(auth,email.value,password.value);
+}catch(err){
+alert(err.message);
+}
 };
 
 onAuthStateChanged(auth,(user)=>{
 if(user){
 currentUser=user.email;
 auth.style.display="none";
-appDiv.style.display="block";
+app.style.display="block";
 loadServers();
 loadFriends();
 }
 });
 
-/* ================= SERVER SYSTEM ================= */
+/* ================= SERVERS ================= */
 
-window.createServer=async()=>{
+window.createServer = async () => {
 if(!serverName.value) return;
 
 await addDoc(collection(db,"servers"),{
@@ -72,7 +80,7 @@ loadMessages();
 
 /* ================= CHAT ================= */
 
-window.sendMessage=async()=>{
+window.sendMessage = async () => {
 if(!messageInput.value) return;
 
 await addDoc(collection(db,"servers/"+currentServer+"/messages"),{
@@ -102,7 +110,7 @@ ${data.text}
 
 /* ================= FRIEND SYSTEM ================= */
 
-window.addFriend=async()=>{
+window.addFriend = async () => {
 if(!friendEmail.value) return;
 
 await addDoc(collection(db,"friends"),{
@@ -127,29 +135,15 @@ friendList.innerHTML+=`
 });
 }
 
-/* ================= BOT ================= */
-
-onSnapshot(collection(db,"servers"),(snap)=>{
-snap.forEach(server=>{
-onSnapshot(collection(db,"servers/"+server.id+"/messages"),(msgs)=>{
-msgs.docChanges().forEach(change=>{
-const data=change.doc.data();
-
-if(data.text === "!ping"){
-addDoc(collection(db,"servers/"+server.id+"/messages"),{
-user:"Bot",
-text:"Pong!",
-time:new Date()
-});
-}
-});
-});
-});
-});
-
 /* ================= VOICE ================= */
 
-window.joinVoice=async()=>{
-const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-alert("Voice başlatıldı (demo)");
+window.joinVoice = async (room) => {
+const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+
+alert("Voice aktif (demo)");
+
+const audio = document.createElement("audio");
+audio.srcObject = stream;
+audio.autoplay = true;
+document.body.appendChild(audio);
 };
