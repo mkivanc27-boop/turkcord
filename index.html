@@ -1,45 +1,16 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <title>Turkcord</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-</head>
+<div id="auth">
 
-<body>
+  <div class="auth-box">
+    <h2>Turkcord</h2>
 
-  <!-- LOGIN -->
-  <div id="login">
-    <input id="username" placeholder="Kullanıcı adı">
-    <button onclick="login()">Giriş</button>
-  </div>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Şifre">
 
-  <!-- CHAT -->
-  <div id="chat" style="display:none;">
-
-    <!-- SIDEBAR -->
-    <div id="sidebar">
-      <h3>Sunucular</h3>
-      <div id="serverList"></div>
-    </div>
-
-    <!-- CHAT AREA -->
-    <div id="channelArea">
-      <h3 id="channelName"># kanal</h3>
-
-      <div id="messages"></div>
-
-      <div id="inputArea">
-        <input id="messageInput" placeholder="Mesaj yaz...">
-        <button onclick="sendMessage()">Gönder</button>
-      </div>
+    <div class="auth-buttons">
+      <button onclick="register()">Kayıt Ol</button>
+      <button onclick="login()">Giriş Yap</button>
     </div>
 
   </div>
 
-  <!-- SCRIPT EN ALTTA -->
-  <script type="module" src="script.js"></script>
-
-</body>
-</html>
+</div>
