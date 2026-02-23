@@ -14,6 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 let currentUser = "";
 let currentServer = "";
@@ -101,3 +102,28 @@ async function loadChannels(serverId) {
     }
   });
 }
+window.register = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  await createUserWithEmailAndPassword(auth, email, password);
+
+  alert("Kayıt başarılı!");
+};
+
+window.login = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  await signInWithEmailAndPassword(auth, email, password);
+};
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("chat").style.display = "flex";
+  } else {
+    document.getElementById("auth").style.display = "flex";
+    document.getElementById("chat").style.display = "none";
+  }
+});
