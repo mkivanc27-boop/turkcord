@@ -71,3 +71,13 @@ window.googleLogin = async function(){
     alert(error.message);
   }
 };
+getRedirectResult(auth).then((result) => {
+  if(result?.user){
+    console.log("Google login başarılı");
+  }
+});
+const provider = new GoogleAuthProvider();
+
+window.googleLogin = async function(){
+  await signInWithRedirect(auth, provider);
+};
