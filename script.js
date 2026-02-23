@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, setDoc, doc, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ===== FIREBASE CONFIG ===== */
 
 const firebaseConfig = {
 apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -15,8 +17,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser="";
-let currentUsername="";
+let currentUser = "";
 
 /* ================= AUTH ================= */
 
@@ -27,8 +28,7 @@ await createUserWithEmailAndPassword(auth,email.value,password.value);
 await setDoc(doc(db,"users",auth.currentUser.uid),{
 username:username.value,
 email:email.value,
-role:"user",
-online:true
+role:"user"
 });
 
 alert("Kayıt başarılı");
@@ -46,28 +46,23 @@ await signOut(auth);
 location.reload();
 };
 
+/* ===== LOGIN SONRASI EKRAN GEÇİŞİ (GARANTİ) ===== */
+
 onAuthStateChanged(auth,(user)=>{
+
 if(user){
 
-currentUser=user.uid;
+currentUser = user.uid;
 
 document.getElementById("auth").style.display="none";
 document.getElementById("app").style.display="block";
 
-loadUserData(user.uid);
-}
-});
-
-async function loadUserData(uid){
-const snap = await getDocs(collection(db,"users"));
-snap.forEach(docSnap=>{
-if(docSnap.id === uid){
-currentUsername = docSnap.data().username;
-}
-});
+console.log("User logged in");
 }
 
-/* ================= SERVER ================= */
+});
+
+/* ================= SERVER CREATE ================= */
 
 window.createServer = async () => {
 
@@ -81,9 +76,12 @@ inviteCode:Math.random().toString(36).substring(2,8),
 members:[currentUser]
 });
 
-serverName.value="";
 alert("Server oluşturuldu");
+
+serverName.value="";
 };
+
+/* ================= SERVER SEARCH ================= */
 
 window.searchServer = async () => {
 
@@ -96,14 +94,24 @@ const data = docSnap.data();
 if(data.name.toLowerCase().includes(searchInput.value.toLowerCase())){
 
 const div=document.createElement("div");
-div.innerHTML = data.name + " | " + (data.public?"Public":"Private");
 
-div.onclick=()=>alert("Invite Code: "+data.inviteCode);
+div.innerHTML = `
+<b>${data.name}</b>
+<br>
+${data.public ? "Public" : "Private"}
+`;
+
+div.onclick=()=>{
+alert("Invite Code: " + data.inviteCode);
+};
 
 serverList.appendChild(div);
 }
+
 });
 };
+
+/* ================= JOIN BY INVITE ================= */
 
 window.joinByInvite = async () => {
 
@@ -125,14 +133,7 @@ members:data.members
 alert("Sunucuya katıldın");
 }
 }
+
 });
+
 };
-
-/* ================= UI FIX ================= */
-
-onAuthStateChanged(auth,(user)=>{
-if(user){
-document.getElementById("auth").style.display="none";
-document.getElementById("app").style.display="block";
-}
-});
