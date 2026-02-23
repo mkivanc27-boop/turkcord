@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Test App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turkcord</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<input id="email" placeholder="Email">
-<input id="password" placeholder="Password">
+<!-- AUTH -->
+<div id="auth">
+<h2>Turkcord</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Şifre">
 
 <button onclick="register()">Kayıt</button>
 <button onclick="login()">Giriş</button>
 
-<script type="module" src="script.js"></script>
+</div>
 
+<!-- APP -->
+<div id="app" style="display:none;">
+
+<button onclick="logout()">Logout</button>
+
+<h3>Sunucu Oluştur</h3>
+
+<input id="serverName" placeholder="Sunucu adı">
+<label>
+<input type="checkbox" id="serverPublic" checked>
+Public Server
+</label>
+
+<button onclick="createServer()">Oluştur</button>
+
+<hr>
+
+<h3>Sunucu Ara</h3>
+
+<input id="searchInput" placeholder="Sunucu ara">
+<button onclick="searchServer()">Ara</button>
+
+<div id="serverList"></div>
+
+<hr>
+
+<h3>Invite ile Katıl</h3>
+
+<input id="inviteInput" placeholder="Invite Code">
+<button onclick="joinByInvite()">Katıl</button>
+
+</div>
+
+<script type="module" src="script.js"></script>
 </body>
-</html>
-<script>
-alert("HTML SCRIPT YÜKLENDİ");
-</script>
+  </html>
