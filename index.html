@@ -9,29 +9,54 @@
 <body>
 
 <div id="auth">
-  <div class="auth-box">
-    <h2>Turkcord</h2>
+  <div class="auth-box" id="loginBox">
+
+    <h2>Login</h2>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Şifre">
 
-    <button onclick="register()">Kayıt</button>
     <button onclick="login()">Giriş</button>
+    <button onclick="register()">Kayıt</button>
 
-    <button onclick="googleLogin()" class="google-btn">
-      Google ile Giriş
-    </button>
+    <p class="small-text">
+      Hesabın yok mu?
+      <span onclick="showRegister()">Kayıt ol</span>
+    </p>
+
+  </div>
+
+  <div class="auth-box" id="registerBox" style="display:none;">
+
+    <h2>Kayıt</h2>
+
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPass" placeholder="Şifre">
+
+    <button onclick="register()">Kayıt Ol</button>
+
+    <p class="small-text">
+      Zaten hesabın var mı?
+      <span onclick="showLogin()">Giriş yap</span>
+    </p>
 
   </div>
 </div>
 
 <div id="app" style="display:none;">
-  <div id="messages"></div>
 
-  <div>
-    <input id="messageInput" placeholder="Mesaj yaz...">
-    <button onclick="sendMessage()">Gönder</button>
-  </div>
+<h2>Turkcord</h2>
+
+<div id="messages"></div>
+
+<input id="messageInput" placeholder="Mesaj yaz...">
+<button onclick="sendMessage()">Gönder</button>
+
+<div id="adminPanel" style="display:none;">
+<h3>Admin Panel</h3>
+<div id="totalUsers"></div>
+</div>
+
 </div>
 
 <script type="module" src="script.js"></script>
