@@ -2,11 +2,11 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:system-ui,-apple-system,sans-serif;
+font-family:system-ui,sans-serif;
 }
 
 body{
-background:#0f0f13;
+background:#1e1f22;
 color:white;
 overflow:hidden;
 }
@@ -19,28 +19,22 @@ display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-gap:12px;
-background:linear-gradient(135deg,#1e1f26,#111);
+gap:15px;
+background:#111214;
 }
 
 #auth input{
-width:260px;
-padding:10px;
+width:300px;
+padding:12px;
 border-radius:8px;
 border:none;
-background:#1c1d22;
+background:#2b2d31;
 color:white;
-outline:none;
-transition:.2s;
-}
-
-#auth input:focus{
-border:1px solid #5865f2;
 }
 
 #auth button{
-width:260px;
-padding:10px;
+width:300px;
+padding:12px;
 border:none;
 border-radius:8px;
 background:#5865f2;
@@ -61,50 +55,74 @@ display:flex;
 height:100vh;
 }
 
-/* SIDEBAR */
+/* SERVER BAR (SOL EN DIŞ) */
 
-.sidebar{
-width:260px;
+.server-bar{
+width:72px;
 background:#111214;
-padding:15px;
-border-right:1px solid #1f1f23;
-overflow-y:auto;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:15px;
+gap:12px;
 }
 
-.sidebar h3{
-opacity:0.7;
-font-size:14px;
-margin-bottom:10px;
-}
-
-.server-item{
-background:#1c1d22;
-padding:8px;
-border-radius:6px;
-margin-bottom:6px;
+.server-icon{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#2b2d31;
+display:flex;
+align-items:center;
+justify-content:center;
 cursor:pointer;
 transition:.2s;
+font-weight:bold;
 }
 
-.server-item:hover{
+.server-icon:hover{
+border-radius:35%;
 background:#5865f2;
-transform:translateX(4px);
 }
 
-/* CHAT */
+/* CHANNEL BAR */
 
-.chat{
+.channel-bar{
+width:220px;
+background:#151618;
+padding:15px;
+border-right:1px solid #2b2d31;
+}
+
+.channel-item{
+padding:8px;
+border-radius:6px;
+background:#2b2d31;
+margin-bottom:6px;
+cursor:pointer;
+}
+
+.channel-item:hover{
+background:#5865f2;
+}
+
+/* CHAT AREA */
+
+.chat-area{
 flex:1;
 display:flex;
 flex-direction:column;
-background:#0f0f13;
+background:#1e1f22;
 }
 
 .chat-header{
-padding:15px;
+height:50px;
 background:#111214;
-border-bottom:1px solid #1f1f23;
+display:flex;
+align-items:center;
+padding-left:15px;
 font-weight:bold;
+border-bottom:1px solid #2b2d31;
 }
 
 .messages{
@@ -114,57 +132,17 @@ overflow-y:auto;
 }
 
 .message{
-background:#1c1d22;
-padding:10px;
-border-radius:8px;
+background:#2b2d31;
+padding:8px;
+border-radius:6px;
 margin-bottom:8px;
-animation:fade .2s ease;
 }
 
-@keyframes fade{
-from{opacity:0; transform:translateY(5px);}
-to{opacity:1; transform:translateY(0);}
-}
-
-/* INPUT */
-
-.chat-input{
-display:flex;
-padding:15px;
-background:#111214;
-border-top:1px solid #1f1f23;
-}
-
-.chat-input input{
-flex:1;
-padding:10px;
-border-radius:8px;
-border:none;
-background:#1c1d22;
-color:white;
-outline:none;
-}
-
-.chat-input button{
-margin-left:10px;
-padding:10px 16px;
-border:none;
-border-radius:8px;
-background:#5865f2;
-color:white;
-cursor:pointer;
-transition:.2s;
-}
-
-.chat-input button:hover{
-background:#4752c4;
-}
-
-/* USER LIST */
+/* USER PANEL */
 
 .user-panel{
 width:200px;
 background:#111214;
 padding:15px;
-border-left:1px solid #1f1f23;
+border-left:1px solid #2b2d31;
 }
