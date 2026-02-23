@@ -49,6 +49,8 @@ font-size:14px;
 </head>
 <body>
 
+<!-- LOGIN -->
+
 <div id="loginScreen" class="screen">
 
 <h2>Login</h2>
@@ -65,6 +67,8 @@ Hesabın yok mu?
 
 </div>
 
+
+<!-- REGISTER -->
 
 <div id="registerScreen" class="screen" style="display:none;">
 
@@ -84,25 +88,50 @@ Zaten hesabın var mı?
 </div>
 
 
+<!-- APP -->
+
+<div id="app" style="display:none; padding:20px;">
+
+<h2>🎉 Giriş Başarılı</h2>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<h3>Server Oluştur</h3>
+
+<input id="serverName" placeholder="Server adı">
+<button onclick="createServer()">Oluştur</button>
+
+<div id="serverList"></div>
+
+</div>
+
+
 <script type="module">
 
 /* 🔥 FIREBASE */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
 import {
 getAuth,
 createUserWithEmailAndPassword,
-signInWithEmailAndPassword
+signInWithEmailAndPassword,
+signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
 getFirestore,
 doc,
-setDoc
+setDoc,
+collection,
+addDoc,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 
-/* 🔴 SENİN CONFIG */
+/* 🔴 CONFIG */
 
 const firebaseConfig = {
 apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -133,28 +162,6 @@ registerScreen.style.display="none";
 
 /* ================= REGISTER ================= */
 
-window.register = async()=>{
-
-try{
-
-const userCredential = await createUserWithEmailAndPassword(
-auth,
-registerEmail.value,
-registerPassword.value
-);
-
-await setDoc(doc(db,"users",userCredential.user.uid),{
-username:registerUsername.value,
-email:registerEmail.value
-});
-
-alert("Kayıt Başarılı");
-
-}catch(err){
-alert("Register Hata:\n"+err.message);
-}
-
-};
 window.register = async()=>{
 try{
 
@@ -193,7 +200,7 @@ loginEmail.value,
 loginPassword.value
 );
 
-/* 🔥 ZORLA EKRAN GEÇİŞİ */
+/* 🔥 OTOMATİK GEÇİŞ */
 loginScreen.style.display="none";
 registerScreen.style.display="none";
 app.style.display="block";
@@ -204,3 +211,57 @@ alert("Login Başarılı");
 alert("Login Hata:\n"+err.message);
 }
 };
+
+
+/* ================= LOGOUT ================= */
+
+window.logout = async()=>{
+await signOut(auth);
+
+app.style.display="none";
+loginScreen.style.display="flex";
+
+};
+
+
+/* ================= SERVER ================= */
+
+window.createServer = async()=>{
+if(!serverName.value) return;
+
+await addDoc(collection(db,"servers"),{
+name:serverName.value,
+owner:auth.currentUser.uid
+});
+
+serverName.value="";
+};
+
+
+/* ================= LOAD SERVERS ================= */
+
+onSnapshot(collection(db,"servers"),snap=>{
+
+serverList.innerHTML="";
+
+snap.forEach(docSnap=>{
+
+const data = docSnap.data();
+
+const div=document.createElement("div");
+div.style.background="#2b2d31";
+div.style.padding="8px";
+div.style.marginTop="6px";
+div.style.borderRadius="6px";
+div.innerText=data.name;
+
+serverList.appendChild(div);
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
