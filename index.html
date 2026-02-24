@@ -30,6 +30,25 @@
   </div>
 
   <div class="user-panel" style="display:none;">
+    <div class="settings">
+
+  <button onclick="toggleSettings()">⚙ Settings</button>
+
+  <div class="dropdown" style="display:none;">
+
+    <button onclick="logout()">Logout</button>
+
+    <h4>Change Nickname</h4>
+    <input id="newNickname" placeholder="New Nickname">
+    <button onclick="changeNickname()">Save</button>
+
+    <h4>Profile Picture</h4>
+    <input type="file" id="avatarInput" accept="image/*">
+    <button onclick="uploadAvatar()">Upload</button>
+
+  </div>
+
+    </div>
     <h2 id="user"></h2>
   </div>
 
