@@ -38,12 +38,12 @@ const db = getFirestore(app);
 
 /* LOGIN */
 
-window.googleLogin = async()=>{
-const provider = new GoogleAuthProvider();
+window.googleLogin=async()=>{
+const provider=new GoogleAuthProvider();
 await signInWithPopup(auth,provider);
 };
 
-window.emailLogin = async()=>{
+window.emailLogin=async()=>{
 const email=document.getElementById("email").value;
 const password=document.getElementById("password").value;
 
@@ -77,15 +77,15 @@ role:"user"
 
 const data=(await getDoc(ref)).data();
 
+/* UI CONTROL */
+document.querySelector(".login-box").style.display="none";
+
 /* Username yoksa */
 if(!data.username){
-document.querySelector(".login-box").style.display="none";
 document.querySelector(".username-box").style.display="flex";
 return;
 }
 
-/* UI Aç */
-document.querySelector(".login-box").style.display="none";
 document.querySelector(".username-box").style.display="none";
 document.querySelector(".user-panel").style.display="flex";
 
@@ -93,13 +93,13 @@ document.getElementById("welcome").innerText="Welcome "+data.username;
 document.getElementById("balance").innerText="Balance: "+data.balance;
 document.getElementById("level").innerText="Level: "+data.level;
 
-/* Balance realtime */
+/* REALTIME BALANCE */
 onSnapshot(ref,(snap)=>{
 const d=snap.data();
 document.getElementById("balance").innerText="Balance: "+d.balance;
 });
 
-/* Admin kontrol */
+/* ADMIN CHECK */
 const adminSnap=await getDoc(doc(db,"settings","admins"));
 const admins=adminSnap.data()?.admins||[];
 
@@ -198,5 +198,5 @@ alert("Duel sent 🔥");
 
 /* SOLO */
 
-window.playCrash=()=>alert("Crash Game Started 🎰");
-window.playDice=()=>alert("Dice Game 🎲");
+window.playCrash=()=>alert("Crash Game");
+window.playDice=()=>alert("Dice Game");
