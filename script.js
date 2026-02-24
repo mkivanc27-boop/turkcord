@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import {
 getAuth,
 signInWithEmailAndPassword,
+createUserWithEmailAndPassword,
 onAuthStateChanged,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -22,7 +23,7 @@ onSnapshot
 /* FIREBASE */
 
 const firebaseConfig = {
-apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+apiKey: "AIzaSyC98wxJq8kNZFdE-OJ1Tlpy1ANuaRUT14",
 authDomain: "turkcord-47b24.firebaseapp.com",
 projectId: "turkcord-47b24",
 storageBucket: "turkcord-47b24.firebasestorage.app",
@@ -72,6 +73,30 @@ const shopPets = [
 {name:"Cosmic Overlord",price:5000000,rarity:"op"}
 ];
 
+/* ================= AUTH TOGGLE ================= */
+
+window.isRegister = false;
+
+window.toggleAuth = () => {
+
+window.isRegister = !window.isRegister;
+
+const usernameInput = document.getElementById("username");
+const registerBtn = document.getElementById("registerBtn");
+const authTitle = document.getElementById("authTitle");
+
+if(window.isRegister){
+usernameInput.style.display="block";
+registerBtn.style.display="inline-block";
+authTitle.innerText="Register";
+}else{
+usernameInput.style.display="none";
+registerBtn.style.display="none";
+authTitle.innerText="Login";
+}
+
+};
+
 /* ================= LOGIN ================= */
 
 window.login = async () => {
@@ -79,27 +104,48 @@ window.login = async () => {
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
-if(!email || !password){
-alert("Email ve password gir!");
-return;
-}
-
-console.log("LOGIN CLICK");
-
 try{
 
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
-
+await signInWithEmailAndPassword(auth,email,password);
 alert("Login Success");
 
 }catch(err){
 
-console.log(err);
-alert("Login Error:\n" + err.message);
+alert("Login Error:\n"+err.message);
+
+}
+
+};
+
+/* ================= REGISTER ================= */
+
+window.register = async () => {
+
+const username = document.getElementById("username").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+if(!username || !email || !password){
+alert("Fill all fields");
+return;
+}
+
+try{
+
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
+
+await setDoc(doc(db,"users",userCred.user.uid),{
+username: username,
+balance:1000,
+banned:false,
+petInventory:[]
+});
+
+alert("Account Created!");
+
+}catch(err){
+
+alert("Register Error:\n"+err.message);
 
 }
 
@@ -109,7 +155,7 @@ alert("Login Error:\n" + err.message);
 
 onAuthStateChanged(auth,async(user)=>{
 
-if(!user) return; // 🔥 FIX USER NULL CRASH
+if(!user) return;
 
 const ref = doc(db,"users",user.uid);
 let snap = await getDoc(ref);
@@ -126,7 +172,7 @@ snap = await getDoc(ref);
 
 let data = snap.data();
 
-/* ================= ADMIN CHECK FIX ================= */
+/* ADMIN CHECK */
 
 if(admins.includes(user.uid)){
 const adminPanel = document.querySelector(".admin-panel");
@@ -135,7 +181,7 @@ adminPanel.style.display="block";
 }
 }
 
-/* ================= USERNAME CHECK ================= */
+/* USERNAME AUTO FIX */
 
 if(data.username===""){
 let name = prompt("Choose Username");
@@ -143,7 +189,7 @@ await setDoc(ref,{username:name},{merge:true});
 data.username = name;
 }
 
-/* ================= BAN CHECK ================= */
+/* BAN CHECK */
 
 if(data.banned){
 alert("BANNED");
@@ -151,7 +197,7 @@ signOut(auth);
 return;
 }
 
-/* ================= UI ================= */
+/* UI */
 
 const loginBox = document.querySelector(".login-box");
 const userPanel = document.querySelector(".user-panel");
@@ -191,21 +237,17 @@ return;
 const userDoc = q.docs[0];
 let pets = userDoc.data().petInventory || [];
 
-/* PET OBJECT */
-
 let newPet = {
 id: Date.now(),
 name: petName,
 rarity: rarity,
-level: 1,
-effect: rarity === "event" ? "EVENT BOOST" : null,
-luck: 20,
-profitBoost: 0.2
+level:1,
+effect: rarity==="event" ? "EVENT BOOST" : null,
+luck:20,
+profitBoost:0.2
 };
 
-/* EVENT POWER */
-
-if(rarity === "event"){
+if(rarity==="event"){
 newPet.luck = 200;
 newPet.profitBoost = 2;
 }
@@ -213,7 +255,7 @@ newPet.profitBoost = 2;
 pets.push(newPet);
 
 await setDoc(doc(db,"users",userDoc.id),{
-petInventory: pets
+petInventory:pets
 },{merge:true});
 
 alert("Pet Given Successfully");
