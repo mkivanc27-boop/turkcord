@@ -78,7 +78,9 @@ document.getElementById("password").value
 /* AUTH */
 
 onAuthStateChanged(auth,async(user)=>{
-
+if(admins.includes(user.uid)){
+document.querySelector(".admin-panel").style.display="block";
+}
 if(!user) return;
 
 const ref=doc(db,"users",user.uid);
@@ -160,4 +162,13 @@ petInventory: pets
 },{merge:true});
 
 alert("Pet Given Successfully");
+};
+window.showSection = (id)=>{
+
+document.querySelectorAll(".box").forEach(box=>{
+box.style.display="none";
+});
+
+document.getElementById(id).style.display="block";
+
 };
