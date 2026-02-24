@@ -14,10 +14,9 @@ getDoc,
 setDoc,
 increment,
 collection,
-query,
-where,
 getDocs,
-onSnapshot
+query,
+where
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 /* FIREBASE */
@@ -35,199 +34,215 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ADMIN UID */
-
 const admins = ["yM7VK1uxhGPb7knLVMzwhLDc3iz1"];
 
-/* ================= TOGGLE ================= */
+/* ================= PET LIST ================= */
 
-window.toggleAuth = () => {
+const petList = [
+/* COMMON */
+{name:"Soul Spark",rarity:"common"},
+{name:"Void Hatchling",rarity:"common"},
+{name:"Crystal Cub",rarity:"common"},
+{name:"Shadow Pup",rarity:"common"},
 
-const username = document.getElementById("username");
-const registerBtn = document.getElementById("registerBtn");
+/* RARE */
+{name:"Frostfang Wolf",rarity:"rare"},
+{name:"Bloodscale Drake",rarity:"rare"},
+{name:"Night Stalker",rarity:"rare"},
+{name:"Phantom Lynx",rarity:"rare"},
 
-if(username.style.display === "none"){
-username.style.display = "block";
-registerBtn.style.display = "inline-block";
-}else{
-username.style.display = "none";
-registerBtn.style.display = "none";
-}
+/* ULTRA */
+{name:"Storm Titan",rarity:"ultra"},
+{name:"Thunder Seraph",rarity:"ultra"},
+{name:"Sky Beast",rarity:"ultra"},
+{name:"Infernal Griffin",rarity:"ultra"},
 
+/* LEGENDARY */
+{name:"Inferno Dragon",rarity:"legendary"},
+{name:"Abyss Dragon",rarity:"legendary"},
+{name:"Celestial Wyrm",rarity:"legendary"},
+{name:"Oblivion Reaper",rarity:"legendary"},
+
+/* MYTHIC */
+{name:"Eclipse Phoenix",rarity:"mythic"},
+{name:"Chrono Leviathan",rarity:"mythic"},
+{name:"Omega Colossus",rarity:"mythic"},
+{name:"Starforge Hydra",rarity:"mythic"},
+
+/* OP */
+{name:"Godslayer Tyrant",rarity:"op"},
+{name:"Void Emperor",rarity:"op"},
+{name:"Quantum Destroyer",rarity:"op"},
+{name:"Cosmic Overlord",rarity:"op"},
+
+/* 🔥 EVENT PETLERİ 🔥 */
+{name:"Halloween Reaper",rarity:"event"},
+{name:"Christmas Seraph",rarity:"event"},
+{name:"Dark Eclipse Titan",rarity:"event"},
+{name:"Anniversary Overlord",rarity:"event"}
+];
+
+/* ================= TOGGLE LOGIN ================= */
+
+window.toggleAuth = ()=>{
+const u=document.getElementById("username");
+const r=document.getElementById("registerBtn");
+u.style.display = u.style.display==="none"?"block":"none";
+r.style.display = r.style.display==="none"?"inline-block":"none";
 };
 
 /* ================= LOGIN ================= */
 
-window.login = async () => {
-
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-if(!email || !password){
-alert("Email ve password gir!");
-return;
-}
-
-try{
-await signInWithEmailAndPassword(auth,email,password);
-}catch(err){
-alert(err.message);
-}
-
+window.login = async ()=>{
+await signInWithEmailAndPassword(
+auth,
+document.getElementById("email").value,
+document.getElementById("password").value
+);
 };
 
 /* ================= REGISTER ================= */
 
-window.register = async () => {
-
-const username = document.getElementById("username").value;
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-if(!username || !email || !password){
-alert("Tum alanlari doldur");
-return;
-}
-
-try{
+window.register = async ()=>{
+const username=document.getElementById("username").value;
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
 
 const userCred = await createUserWithEmailAndPassword(auth,email,password);
 
 await setDoc(doc(db,"users",userCred.user.uid),{
-username: username,
+username:username,
 balance:1000,
-banned:false,
-petInventory:[]
+petInventory:[],
+banned:false
 });
-
-alert("Hesap oluşturuldu");
-
-}catch(err){
-alert(err.message);
-}
-
 };
 
 /* ================= AUTH ================= */
 
 onAuthStateChanged(auth,async(user)=>{
-
 if(!user) return;
 
-const ref = doc(db,"users",user.uid);
-let snap = await getDoc(ref);
+const ref=doc(db,"users",user.uid);
+const snap=await getDoc(ref);
+const data=snap.data();
 
-if(!snap.exists()){
-await setDoc(ref,{
-username:"",
-balance:1000,
-banned:false,
-petInventory:[]
-});
-snap = await getDoc(ref);
-}
-
-let data = snap.data();
-
-/* ADMIN */
+document.querySelector(".login-box").style.display="none";
+document.querySelector(".user-panel").style.display="block";
 
 if(admins.includes(user.uid)){
-const adminPanel = document.querySelector(".admin-panel");
-if(adminPanel){
-adminPanel.style.display="block";
+document.querySelector(".admin-panel").style.display="block";
 }
-}
-
-/* USERNAME CHECK */
-
-if(data.username===""){
-let name = prompt("Choose Username");
-await setDoc(ref,{username:name},{merge:true});
-data.username = name;
-}
-
-/* BAN */
-
-if(data.banned){
-alert("BANNED");
-signOut(auth);
-return;
-}
-
-/* UI */
-
-const loginBox = document.querySelector(".login-box");
-const userPanel = document.querySelector(".user-panel");
-
-if(loginBox) loginBox.style.display="none";
-if(userPanel) userPanel.style.display="block";
 
 document.getElementById("welcome").innerText=data.username;
 document.getElementById("balance").innerText=data.balance;
 
-/* ESKİ SİSTEMLERİN */
-
-loadShop?.();
-loadInventory?.();
-loadLeaderboard?.();
-
+loadInventory();
+loadLeaderboard();
 });
 
-/* ================= EVENT / ADMIN PET GIFT ================= */
+/* ================= INVENTORY ================= */
 
-window.giftPetToUser = async()=>{
+async function loadInventory(){
+const user=auth.currentUser;
+const snap=await getDoc(doc(db,"users",user.uid));
+const data=snap.data();
 
-const username = document.getElementById("giftUser").value;
-const petName = document.getElementById("giftPet").value;
-const rarity = document.getElementById("giftRarity").value;
+const inv=document.getElementById("inventory");
+inv.innerHTML="";
 
-if(!username || !petName) return;
+(data.petInventory||[]).forEach(p=>{
+inv.innerHTML+=`
+<div style="border:1px solid white;margin:5px;padding:5px">
+<h4>${p.name}</h4>
+<p>Rarity: ${p.rarity}</p>
+</div>
+`;
+});
+}
 
-const q = await getDocs(query(
+/* ================= ADMIN PET GIFT ================= */
+
+window.giftPetToUser = async ()=>{
+const username=document.getElementById("giftUser").value;
+const petName=document.getElementById("giftPet").value;
+
+const q=await getDocs(query(
 collection(db,"users"),
 where("username","==",username)
 ));
 
-if(q.empty){
-alert("User not found");
-return;
-}
+if(q.empty) return alert("User not found");
 
-const userDoc = q.docs[0];
-let pets = userDoc.data().petInventory || [];
+const petData = petList.find(p=>p.name===petName);
+if(!petData) return alert("Pet not found");
 
-let newPet = {
-id: Date.now(),
-name: petName,
-rarity: rarity,
-level:1,
-effect: rarity==="event" ? "EVENT BOOST" : null,
-luck:20,
-profitBoost:0.2
-};
+let pets=q.docs[0].data().petInventory||[];
 
-if(rarity==="event"){
-newPet.luck = 200;
-newPet.profitBoost = 2;
-}
+pets.push({
+id:Date.now(),
+name:petData.name,
+rarity:petData.rarity,
+level:1
+});
 
-pets.push(newPet);
-
-await setDoc(doc(db,"users",userDoc.id),{
+await setDoc(doc(db,"users",q.docs[0].id),{
 petInventory:pets
 },{merge:true});
 
-alert("Pet Given Successfully");
+alert("Pet Given");
+};
 
+/* ================= LEADERBOARD ================= */
+
+async function loadLeaderboard(){
+const q=await getDocs(collection(db,"users"));
+let arr=[];
+q.forEach(d=>arr.push(d.data()));
+arr.sort((a,b)=>b.balance-a.balance);
+
+const lb=document.getElementById("leaderboard");
+lb.innerHTML="";
+arr.slice(0,10).forEach(p=>{
+lb.innerHTML+=`<p>${p.username} - ${p.balance}</p>`;
+});
+}
+
+/* ================= GAME ================= */
+
+window.playGame = async ()=>{
+const user=auth.currentUser;
+await setDoc(doc(db,"users",user.uid),{
+balance:increment(100)
+},{merge:true});
+};
+
+/* ================= SETTINGS ================= */
+
+window.toggleSettings = ()=>{
+const s=document.getElementById("settings");
+s.style.display=s.style.display==="block"?"none":"block";
 };
 
 window.showSection = (id)=>{
+document.querySelectorAll(".box").forEach(b=>b.style.display="none");
+document.getElementById(id).style.display="block";
+};
 
-document.querySelectorAll(".box").forEach(box=>{
-box.style.display="none";
-});
+/* ================= MONEY GIVE ================= */
 
-const section = document.getElementById(id);
-if(section) section.style.display="block";
+window.giveMoney = async ()=>{
+const username=document.getElementById("giveUser").value;
+const amount=Number(document.getElementById("giveAmount").value);
 
+const q=await getDocs(query(
+collection(db,"users"),
+where("username","==",username)
+));
+
+if(q.empty) return alert("User not found");
+
+await setDoc(doc(db,"users",q.docs[0].id),{
+balance:increment(amount)
+},{merge:true});
 };
