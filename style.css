@@ -15,6 +15,19 @@ max-width:400px;
 padding:20px;
 }
 
+.logo{
+width:250px;
+display:block;
+margin:0 auto 20px auto;
+filter: drop-shadow(0 0 25px #5865f2);
+transition:0.3s;
+}
+
+.logo:hover{
+transform: scale(1.05);
+filter: drop-shadow(0 0 40px #8a2be2);
+}
+
 .login-box,
 .nickname-box,
 .user-panel{
