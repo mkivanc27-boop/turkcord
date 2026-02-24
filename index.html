@@ -2,16 +2,15 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gambling Community FINAL</title>
+<title>Gambling Community</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
 
-<img src="logo.png" class="logo">
+<img src="file_00000000ddf0722fbd72f8dd39656a09.png" class="logo">
 
-<!-- LOGIN -->
 <div class="login-box">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
@@ -19,36 +18,63 @@
 <button onclick="login()">Login</button>
 </div>
 
-<!-- DASHBOARD -->
 <div class="user-panel" style="display:none;">
 
 <h2 id="welcome"></h2>
 <h3>💰 <span id="balance"></span></h3>
 
-<button onclick="toggleGames()">🎮 Games</button>
+<button onclick="toggleGames()">Games</button>
 
 <div id="gamesPanel" style="display:none;">
 
 <h3>🎰 Wheel</h3>
-<input id="bet" type="number" placeholder="Bet">
+<input id="bet">
 <button onclick="spinWheel()">Spin</button>
 <div id="result"></div>
+
+<hr>
+
+<h3>🥊 Duel</h3>
+<input id="duelUser" placeholder="Opponent Username">
+<input id="duelBet" placeholder="Bet">
+<button onclick="createDuel()">Create</button>
+<div id="duelList"></div>
 
 </div>
 
 <hr>
 
 <h3>🛒 Pet Shop</h3>
-<div class="slider" id="shopSlider"></div>
+<div id="shopSlider" class="slider"></div>
 
 <hr>
 
 <h3>🐉 Inventory</h3>
-<div class="slider" id="inventorySlider"></div>
+<button onclick="fusionPet()">Fuse 3 Pets</button>
+<div id="inventorySlider" class="slider"></div>
 
 <hr>
 
-<button onclick="toggleSettings()">⚙ Settings</button>
+<h3>🏆 Leaderboard</h3>
+<div id="leaderboard"></div>
+
+<hr>
+
+<h3>🛒 Marketplace</h3>
+<input id="sellPetId" placeholder="Pet ID">
+<input id="sellPrice" placeholder="Price">
+<button onclick="sellPet()">Sell</button>
+<div id="marketList"></div>
+
+<hr>
+
+<h3>🎉 Announcement</h3>
+<input id="announcementInput">
+<button onclick="sendAnnouncement()">Send</button>
+
+<hr>
+
+<button onclick="toggleSettings()">Settings</button>
 
 <div id="settingsMenu" style="display:none;">
 
@@ -56,10 +82,10 @@
 
 <div class="admin-panel" style="display:none;">
 
-<h2>👑 SUPER ADMIN</h2>
+<h2>ADMIN</h2>
 
-<h3>Ban User</h3>
-<input id="banUser" placeholder="Username">
+<h3>Ban</h3>
+<input id="banUser">
 <button onclick="banUser()">Ban</button>
 
 <h3>Unban</h3>
@@ -67,12 +93,12 @@
 <button onclick="unbanUser()">Unban</button>
 
 <h3>Give Money</h3>
-<input id="moneyUser" placeholder="Username">
-<input id="moneyAmount" type="number">
+<input id="moneyUser">
+<input id="moneyAmount">
 <button onclick="giveMoney()">Give</button>
 
 <h3>Gift Pet</h3>
-<input id="giftUser" placeholder="Username">
+<input id="giftUser">
 <input id="giftPet">
 <select id="giftRarity">
 <option value="common">Common</option>
@@ -84,10 +110,6 @@
 </select>
 <button onclick="giftPetToUser()">Send</button>
 
-<h3>Global Announcement</h3>
-<input id="announcement">
-<button onclick="sendAnnouncement()">Send</button>
-
 </div>
 
 </div>
@@ -97,5 +119,6 @@
 </div>
 
 <script type="module" src="script.js"></script>
+
 </body>
 </html>
