@@ -3,134 +3,293 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurkCord</title>
+<title>TurboChat</title>
 
 <style>
-body{
+*{
 margin:0;
-font-family:Arial;
-background:#313338;
-color:white;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, Arial;
 }
 
-.hidden{display:none}
+body{
+background:#313338;
+color:white;
+height:100vh;
+overflow:hidden;
+}
 
-/* AUTH */
-#auth{
+/* LOGIN */
+
+#loginScreen{
 height:100vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
+background:#1e1f22;
 }
 
-#auth input{
-margin:5px;
-padding:10px;
-width:230px;
+#loginScreen input{
+margin:6px;
+padding:12px;
+width:260px;
+border-radius:8px;
+border:none;
 }
 
-#auth button{
-padding:10px;
-width:250px;
+#loginScreen button{
+padding:12px;
+width:260px;
+border:none;
+border-radius:8px;
+background:#5865f2;
+color:white;
 cursor:pointer;
 }
 
 /* APP */
+
 #app{
-display:flex;
+display:none;
 height:100vh;
+width:100%;
 }
 
-/* Servers */
+/* SERVER BAR */
+
 #servers{
-width:70px;
-background:#1e1f22;
+width:72px;
+background:#202225;
 display:flex;
 flex-direction:column;
 align-items:center;
 padding-top:10px;
+gap:10px;
+flex-shrink:0;
 }
 
+/* SERVER BUTTON */
+
 .server{
-width:45px;
-height:45px;
-background:#36393f;
+width:48px;
+height:48px;
 border-radius:50%;
+background:#2b2d31;
 display:flex;
 align-items:center;
 justify-content:center;
-margin-bottom:10px;
 cursor:pointer;
+transition:0.2s;
 }
 
-.server.active{
+.server:hover{
 background:#5865f2;
+transform:scale(1.1);
 }
 
-/* Sidebar */
+/* CHANNEL PANEL */
+
 #sidebar{
 width:240px;
 background:#2b2d31;
 padding:10px;
 overflow:auto;
+flex-shrink:0;
+border-right:1px solid #202225;
 }
 
-/* Chat */
+.sidebar-item{
+padding:8px;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.sidebar-item:hover{
+background:#40444b;
+}
+
+/* CHAT */
+
 #chat{
 flex:1;
 display:flex;
 flex-direction:column;
+overflow:hidden;
 }
 
 #messages{
 flex:1;
 overflow:auto;
-padding:10px;
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:8px;
 }
 
 .message{
 background:#40444b;
-padding:8px;
-border-radius:8px;
-margin-bottom:6px;
+padding:10px;
+border-radius:10px;
+max-width:60%;
 }
 
-.me{
+.message.me{
 background:#5865f2;
+align-self:flex-end;
 }
+
+/* INPUT */
 
 #input{
 display:flex;
+padding:10px;
+background:#2b2d31;
+gap:10px;
 }
 
 #input input{
 flex:1;
 padding:10px;
+border-radius:8px;
 border:none;
+background:#40444b;
+color:white;
 }
 
 #input button{
-padding:10px;
+padding:10px 15px;
 border:none;
+border-radius:8px;
 background:#5865f2;
 color:white;
 cursor:pointer;
 }
+
+
+/* APP */
+
+#app{
+display:none;
+height:100vh;
+width:100%;
+}
+
+/* SERVER BAR */
+
+#servers{
+width:72px;
+background:#202225;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:10px;
+gap:10px;
+flex-shrink:0;
+}
+
+.server{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#2b2d31;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:0.2s;
+}
+
+.server:hover{
+background:#5865f2;
+}
+
+/* SIDEBAR */
+
+#sidebar{
+width:240px;
+background:#2b2d31;
+padding:10px;
+overflow:auto;
+flex-shrink:0;
+border-right:1px solid #202225;
+}
+
+/* CHAT */
+
+#chat{
+flex:1;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+#messages{
+flex:1;
+overflow:auto;
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.message{
+background:#40444b;
+padding:10px;
+border-radius:10px;
+max-width:60%;
+}
+
+.message.me{
+background:#5865f2;
+align-self:flex-end;
+}
+
+/* INPUT */
+
+#input{
+display:flex;
+padding:10px;
+background:#2b2d31;
+gap:10px;
+}
+
+#input input{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:none;
+background:#40444b;
+color:white;
+}
+
+#input button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+background:#5865f2;
+color:white;
+cursor:pointer;
+}
+
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
-<div id="auth">
-<h2>Login</h2>
+<!-- LOGIN -->
+<div id="loginScreen">
+<h2>TurboChat</h2>
+
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
+
 <button onclick="login()">Login / Register</button>
 </div>
 
 <!-- APP -->
-<div id="app" class="hidden">
+<div id="app">
 
 <div id="servers">
 <div class="server" onclick="createServer()">+</div>
@@ -138,23 +297,24 @@ cursor:pointer;
 </div>
 
 <div id="sidebar">
-<h3>Friends</h3>
-<input id="friendUid" placeholder="Friend UID">
-<button onclick="addFriend()">Add Friend</button>
-<div id="friendList"></div>
+<h3>Channels</h3>
+<div id="channelList"></div>
+
+<hr>
+
+<h3>Members</h3>
+<div id="memberList"></div>
 </div>
 
 <div id="chat">
 <div id="messages"></div>
 
-<div id="typing"></div>
-
 <div id="input">
-<input id="messageInput" placeholder="Mesaj yaz">
+<input id="messageInput" placeholder="Write message">
 <button onclick="sendMessage()">Send</button>
 </div>
-
 </div>
+
 </div>
 
 <script type="module">
@@ -163,26 +323,11 @@ cursor:pointer;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-import {
-getAuth,
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-getFirestore,
-collection,
-addDoc,
-setDoc,
-doc,
-query,
-where,
-orderBy,
-onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+/* 🔥 YOUR CONFIG */
 
-/* 🔥 SENİN FIREBASE CONFIG */
 const firebaseConfig = {
 apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
 authDomain: "turkcord-47b24.firebaseapp.com",
@@ -193,7 +338,8 @@ appId: "1:474688300925:web:316134db4b4cb441438e14",
 measurementId: "G-S92JHCM9P9"
 };
 
-/* 🔥 INIT */
+/* INIT */
+
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
@@ -201,15 +347,14 @@ const db = getFirestore(app);
 
 /* ================= STATE ================= */
 
-let currentServer=null;
 let currentRoom=null;
 
 /* ================= AUTH ================= */
 
-window.login=async()=>{
+window.login = async()=>{
 
-const email=emailInput.value;
-const pass=password.value;
+const email = emailInput.value;
+const pass = password.value;
 
 try{
 await signInWithEmailAndPassword(auth,email,pass);
@@ -223,22 +368,22 @@ await createUserWithEmailAndPassword(auth,email,pass);
 onAuthStateChanged(auth,user=>{
 
 if(user){
-authDiv.classList.add("hidden");
-app.classList.remove("hidden");
+loginScreen.style.display="none";
+appDiv.style.display="flex";
 loadServers();
-loadFriends();
-}else{
-authDiv.classList.remove("hidden");
-app.classList.add("hidden");
+}
+else{
+loginScreen.style.display="flex";
+appDiv.style.display="none";
 }
 
 });
 
 /* ================= SERVER ================= */
 
-window.createServer=async()=>{
+window.createServer = async()=>{
 
-const name=prompt("Server adı");
+const name = prompt("Server name");
 if(!name) return;
 
 await addDoc(collection(db,"servers"),{
@@ -257,16 +402,15 @@ serverList.innerHTML="";
 
 snap.forEach(doc=>{
 
-const data=doc.data();
+const data = doc.data();
 
-if(!data.members.includes(auth.currentUser.uid)) return;
+if(!data.members?.includes(auth.currentUser.uid)) return;
 
 const div=document.createElement("div");
 div.className="server";
 div.innerText=data.name[0];
 
 div.onclick=()=>{
-currentServer=doc.id;
 currentRoom=doc.id;
 loadMessages();
 };
@@ -279,54 +423,9 @@ serverList.appendChild(div);
 
 }
 
-/* ================= FRIEND ================= */
-
-window.addFriend=async()=>{
-
-const uid=friendUid.value;
-if(!uid) return;
-
-await addDoc(collection(db,"friends"),{
-users:[auth.currentUser.uid,uid]
-});
-
-alert("Friend Added");
-
-};
-
-function loadFriends(){
-
-onSnapshot(collection(db,"friends"),snap=>{
-
-friendList.innerHTML="";
-
-snap.forEach(doc=>{
-
-const data=doc.data();
-
-if(!data.users.includes(auth.currentUser.uid)) return;
-
-const friend=data.users.find(u=>u!==auth.currentUser.uid);
-
-const div=document.createElement("div");
-div.innerText="Friend: "+friend;
-
-div.onclick=()=>{
-currentRoom=[auth.currentUser.uid,friend].sort().join("_");
-loadMessages();
-};
-
-friendList.appendChild(div);
-
-});
-
-});
-
-}
-
 /* ================= MESSAGES ================= */
 
-window.sendMessage=async()=>{
+window.sendMessage = async()=>{
 
 if(!currentRoom) return;
 
@@ -356,13 +455,14 @@ messages.innerHTML="";
 
 snap.forEach(doc=>{
 
-const data=doc.data();
+const data = doc.data();
 
 const div=document.createElement("div");
 div.className="message";
 
-if(data.uid===auth.currentUser.uid)
+if(data.uid===auth.currentUser.uid){
 div.classList.add("me");
+}
 
 div.innerText=data.email+": "+data.text;
 
