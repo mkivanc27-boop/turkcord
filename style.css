@@ -1,35 +1,77 @@
 body {
+  margin: 0;
+  font-family: Arial, sans-serif;
   background-color: #0f0f0f;
   color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
+/* Container */
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+/* Login Box */
+
+.login-box {
+  background: #181818;
+  padding: 30px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+/* Inputs */
+
 input {
-  padding: 10px;
-  margin: 5px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
+  background: #222;
+  color: white;
   outline: none;
 }
 
+/* Buttons */
+
 button {
-  padding: 10px 20px;
-  margin: 5px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  background-color: #6a0dad;
+  background: #5865f2;
   color: white;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 button:hover {
-  background-color: #8a2be2;
-  transform: scale(1.05);
+  background: #4752c4;
+  transform: scale(1.03);
 }
 
-h1 {
-  font-size: 40px;
+/* Google Button */
+
+.google {
+  background: #db4437;
+}
+
+.google:hover {
+  background: #c23321;
+}
+
+/* Divider */
+
+.divider {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 14px;
 }
