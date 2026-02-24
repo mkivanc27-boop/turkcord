@@ -278,3 +278,9 @@ document.getElementById(id).classList.remove("hidden");
 
 if(id==="leaderboard") loadLeaderboard();
 }
+window.login = login;
+window.register = register;
+window.toggleAuth = toggleAuth;
+window.showSection = showSection;
+window.toggleSettings = toggleSettings;
+window.playGame = playGame;
