@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pet World</title>
 
 <style>
@@ -13,8 +14,7 @@ font-family:Inter, sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-min-height:100vh;
+background:#0f172a;
 color:white;
 }
 
@@ -22,170 +22,136 @@ color:white;
 display:none;
 }
 
-/* LOGIN */
+/* AUTH */
 
-.auth-container{
-height:100vh;
+.auth{
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+padding:20px;
 }
 
-.auth-box{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(20px);
-padding:40px;
-border-radius:20px;
-width:350px;
-text-align:center;
-box-shadow:0 0 40px rgba(0,0,0,0.5);
-}
-
-.auth-box h2{
-margin-bottom:20px;
-}
-
-.auth-box input{
+.card{
+background:#1e293b;
 width:100%;
-padding:12px;
+max-width:400px;
+padding:30px;
+border-radius:20px;
+}
+
+.card h2{
+margin-bottom:20px;
+text-align:center;
+}
+
+.card input{
+width:100%;
+padding:15px;
 margin:10px 0;
 border:none;
-border-radius:10px;
-background:rgba(255,255,255,0.1);
+border-radius:15px;
+background:#334155;
 color:white;
+font-size:16px;
 }
 
-.auth-box button{
+.card button{
 width:100%;
-padding:12px;
+padding:15px;
 margin-top:10px;
 border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#6a11cb,#2575fc);
+border-radius:15px;
+background:#3b82f6;
 color:white;
+font-size:16px;
 font-weight:bold;
-cursor:pointer;
-transition:0.3s;
-}
-
-.auth-box button:hover{
-transform:scale(1.05);
 }
 
 .switch{
 margin-top:15px;
-cursor:pointer;
-color:#aaa;
+text-align:center;
 font-size:14px;
+color:#94a3b8;
+cursor:pointer;
 }
 
 /* APP */
 
 .app{
-padding:20px;
-max-width:1000px;
-margin:auto;
+padding:15px;
 }
 
-.topbar{
+.top{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
-.balance{
-background:rgba(255,255,255,0.1);
-padding:10px 20px;
+.money{
+background:#1e293b;
+padding:10px 15px;
 border-radius:15px;
 }
 
 .menu{
 display:flex;
-gap:15px;
-margin-bottom:20px;
-flex-wrap:wrap;
+flex-direction:column;
+gap:10px;
+margin-bottom:15px;
 }
 
 .menu button{
-background:rgba(255,255,255,0.08);
+padding:15px;
 border:none;
-padding:10px 20px;
-border-radius:12px;
+border-radius:15px;
+background:#1e293b;
 color:white;
-cursor:pointer;
-transition:0.2s;
-}
-
-.menu button:hover{
-background:linear-gradient(90deg,#ff416c,#ff4b2b);
+font-size:16px;
 }
 
 .section{
-background:rgba(255,255,255,0.05);
-padding:20px;
+background:#1e293b;
+padding:15px;
 border-radius:20px;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
 .pet-grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:15px;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
 }
 
-.pet-card{
-background:rgba(255,255,255,0.08);
+.pet{
+background:#334155;
 padding:15px;
 border-radius:15px;
 text-align:center;
-transition:0.2s;
-}
-
-.pet-card:hover{
-transform:translateY(-5px);
 }
 
 .event{
 border:2px solid gold;
-box-shadow:0 0 20px gold;
 }
 
-.admin-panel input{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:10px;
-border:none;
-background:rgba(255,255,255,0.1);
-color:white;
+.rank{
+padding:12px;
+border-bottom:1px solid #334155;
 }
-
-.admin-panel button{
-width:100%;
-padding:10px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#00c9ff,#92fe9d);
-cursor:pointer;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="auth-container" id="auth">
-<div class="auth-box">
+<div class="auth" id="auth">
+<div class="card">
 <h2>Login</h2>
-
 <input id="username" placeholder="Username" class="hidden">
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
-
 <button onclick="login()">Login</button>
 <button onclick="register()" id="registerBtn" class="hidden">Register</button>
-
 <p class="switch" onclick="toggleAuth()">
 Hesabın yok mu? Yeni hesap oluştur
 </p>
@@ -194,9 +160,9 @@ Hesabın yok mu? Yeni hesap oluştur
 
 <div class="app hidden" id="app">
 
-<div class="topbar">
-<h2>Welcome <span id="welcome"></span></h2>
-<div class="balance">💰 <span id="balance"></span></div>
+<div class="top">
+<h3 id="welcome"></h3>
+<div class="money">$<span id="balance"></span></div>
 </div>
 
 <div class="menu">
@@ -218,20 +184,11 @@ Hesabın yok mu? Yeni hesap oluştur
 </div>
 
 <div id="settings" class="section hidden">
-<h3>Settings</h3>
-<p>Coming Soon...</p>
-</div>
-
-<div class="section admin-panel">
-<h3>Admin Panel</h3>
-<input id="giveUser" placeholder="Username">
-<input id="giveAmount" type="number" placeholder="Amount">
-<button onclick="giveMoney()">Give Money</button>
+Settings coming soon
 </div>
 
 </div>
 
 <script type="module" src="script.js"></script>
-
 </body>
 </html>
