@@ -22,7 +22,7 @@ onSnapshot,
 increment
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-/* ================= FIREBASE ================= */
+/* 🔥 FIREBASE */
 
 const firebaseConfig = {
 apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -37,22 +37,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ================= LOADING FIX ================= */
-
-window.addEventListener("DOMContentLoaded", () => {
-
-setTimeout(() => {
-
-const loading = document.getElementById("loading");
-const appDiv = document.getElementById("app");
-
-if (loading) loading.style.display = "none";
-if (appDiv) appDiv.style.display = "block";
-
-}, 1200);
-
-});
-
 /* ================= LOGIN ================= */
 
 window.googleLogin = async () => {
@@ -61,7 +45,6 @@ await signInWithPopup(auth, provider);
 };
 
 window.emailLogin = async () => {
-
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
@@ -70,10 +53,9 @@ await signInWithEmailAndPassword(auth, email, password);
 } catch {
 await createUserWithEmailAndPassword(auth, email, password);
 }
-
 };
 
-/* ================= AUTH SYSTEM ================= */
+/* ================= AUTH ================= */
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -85,8 +67,6 @@ return;
 
 const ref = doc(db, "users", user.uid);
 const snap = await getDoc(ref);
-
-/* USER CREATE */
 
 if (!snap.exists()) {
 await setDoc(ref, {
@@ -101,15 +81,12 @@ role: "user"
 
 const data = (await getDoc(ref)).data();
 
-/* USERNAME YOKSA */
-
+/* Username yoksa */
 if (!data.username) {
 document.querySelector(".login-box").style.display = "none";
 document.querySelector(".username-box").style.display = "flex";
 return;
 }
-
-/* DASHBOARD AÇ */
 
 document.querySelector(".login-box").style.display = "none";
 document.querySelector(".username-box").style.display = "none";
@@ -124,22 +101,20 @@ document.getElementById("balance").innerText =
 document.getElementById("level").innerText =
 "Level: " + data.level;
 
-/* REALTIME BALANCE */
-
+/* Realtime Balance */
 onSnapshot(ref, (snap) => {
 const d = snap.data();
-if (d) {
+if(d){
 document.getElementById("balance").innerText =
 "Balance: " + d.balance;
 }
 });
 
-/* ADMIN CHECK */
-
-const adminSnap = await getDoc(doc(db, "settings", "admins"));
+/* Admin Check */
+const adminSnap = await getDoc(doc(db,"settings","admins"));
 const admins = adminSnap.data()?.admins || [];
 
-if (admins.includes(user.uid)) {
+if(admins.includes(user.uid)){
 document.querySelector(".admin-panel").style.display = "block";
 }
 
@@ -152,30 +127,30 @@ window.saveUsername = async () => {
 const user = auth.currentUser;
 const username = document.getElementById("usernameInput").value;
 
-if (username.length < 8 || username.length > 16) {
-alert("8-16 karakter olmalı");
+if(username.length < 8 || username.length > 16){
+alert("8-16 karakter");
 return;
 }
 
 const regex = /^[a-zA-Z0-9]+$/;
-if (!regex.test(username)) {
+if(!regex.test(username)){
 alert("Sadece harf ve sayı");
 return;
 }
 
-const q = query(collection(db, "users"),
-where("username", "==", username));
+const q = query(collection(db,"users"),
+where("username","==",username));
 
 const snap = await getDocs(q);
 
-if (!snap.empty) {
-alert("Username zaten alınmış");
+if(!snap.empty){
+alert("Username alınmış");
 return;
 }
 
-await setDoc(doc(db, "users", user.uid), {
+await setDoc(doc(db,"users",user.uid),{
 username: username
-}, { merge: true });
+},{merge:true});
 
 location.reload();
 };
@@ -193,13 +168,12 @@ location.reload();
 };
 
 window.changeUsername = async () => {
-
 const user = auth.currentUser;
 const newUsername = document.getElementById("newUsername").value;
 
-await setDoc(doc(db, "users", user.uid), {
-username: newUsername
-}, { merge: true });
+await setDoc(doc(db,"users",user.uid),{
+username:newUsername
+},{merge:true});
 
 location.reload();
 };
@@ -211,70 +185,71 @@ window.startDuel = async () => {
 const opponentUsername =
 document.getElementById("duelOpponent").value;
 
-const bet = parseInt(document.getElementById("duelBet").value);
-const mode = document.getElementById("gameMode").value;
+const bet =
+parseInt(document.getElementById("duelBet").value);
+
+const mode =
+document.getElementById("gameMode").value;
 
 const user = auth.currentUser;
 
-const q = query(collection(db, "users"),
-where("username", "==", opponentUsername));
+const q = query(collection(db,"users"),
+where("username","==",opponentUsername));
 
 const snap = await getDocs(q);
 
-if (snap.empty) {
-alert("Opponent bulunamadı");
+if(snap.empty){
+alert("Opponent yok");
 return;
 }
 
 const opponent = snap.docs[0];
 
-await setDoc(doc(collection(db, "duels")), {
-challenger: user.uid,
-opponent: opponent.id,
-bet: bet,
-gameMode: mode,
-status: "pending",
-createdAt: new Date()
+await setDoc(doc(collection(db,"duels")),{
+challenger:user.uid,
+opponent:opponent.id,
+bet:bet,
+gameMode:mode,
+status:"pending",
+createdAt:new Date()
 });
 
 alert("Duel gönderildi 🔥");
 };
 
-/* ================= SOLO GAMES ================= */
+/* ================= SOLO ================= */
 
 window.playCrash = async () => {
 
 const user = auth.currentUser;
-const ref = doc(db, "users", user.uid);
+const ref = doc(db,"users",user.uid);
 
-await setDoc(ref, {
-xp: increment(10),
+await setDoc(ref,{
 balance: increment(50),
-level: increment(0)
-}, { merge: true });
+xp: increment(10)
+},{merge:true});
 
-alert("Crash oynandı +50 balance +10 xp");
+alert("Crash oynandı +50 💰");
 };
 
 window.playDice = async () => {
 
 const user = auth.currentUser;
-const ref = doc(db, "users", user.uid);
+const ref = doc(db,"users",user.uid);
 
 const win = Math.random() > 0.5;
 
-if (win) {
-await setDoc(ref, {
+if(win){
+await setDoc(ref,{
 balance: increment(100),
 xp: increment(20)
-}, { merge: true });
-
+},{merge:true});
 alert("Kazandın 🎲");
-} else {
-await setDoc(ref, {
+}
+else{
+await setDoc(ref,{
 balance: increment(-50)
-}, { merge: true });
-
+},{merge:true});
 alert("Kaybettin 💀");
 }
 
