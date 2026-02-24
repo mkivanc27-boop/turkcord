@@ -3,16 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <title>Pet System</title>
+
 <style>
-body{font-family:Arial;background:#111;color:white;text-align:center}
-.box{display:none;margin-top:20px}
-button{margin:5px;padding:8px 15px;cursor:pointer}
-input{margin:5px;padding:5px}
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(180deg,#0f0f1a,#1b1b2f);
+color:white;
+}
+
+.navbar{
+background:#141428;
+padding:15px;
+display:flex;
+justify-content:center;
+gap:15px;
+box-shadow:0 0 15px black;
+}
+
+.navbar button{
+background:#2a2a4f;
+border:none;
+padding:8px 18px;
+color:white;
+border-radius:8px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.navbar button:hover{
+background:#4a4aff;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:#1e1e35;
+padding:20px;
+margin-top:20px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+.pet-card{
+background:#252545;
+padding:10px;
+margin:10px 0;
+border-radius:8px;
+}
+
+.event{
+border:2px solid red;
+box-shadow:0 0 15px red;
+}
+
+.login-box{
+max-width:400px;
+margin:100px auto;
+background:#1e1e35;
+padding:20px;
+border-radius:12px;
+box-shadow:0 0 20px black;
+text-align:center;
+}
+
+input{
+width:90%;
+padding:8px;
+margin:8px 0;
+border:none;
+border-radius:6px;
+}
+
+button{
+cursor:pointer;
+}
 </style>
 </head>
-<body>
 
-<!-- LOGIN -->
+<body>
 
 <div class="login-box">
 <h2>Login</h2>
@@ -24,58 +97,44 @@ input{margin:5px;padding:5px}
 <button onclick="login()">Login</button>
 <button onclick="register()" id="registerBtn" style="display:none;">Register</button>
 
-<p onclick="toggleAuth()" style="cursor:pointer;color:#00aaff;margin-top:10px;">
+<p onclick="toggleAuth()" style="cursor:pointer;color:#4a8cff;margin-top:10px;">
 Hesabın yok mu? Hemen yeni hesap oluştur
 </p>
-
 </div>
 
-<!-- USER PANEL -->
-
-<div class="user-panel" style="display:none;">
+<div class="container user-panel" style="display:none;">
 
 <h2>Welcome <span id="welcome"></span></h2>
 <p>Balance: <span id="balance"></span></p>
 
+<div class="navbar">
 <button onclick="showSection('inventory')">Inventory</button>
 <button onclick="showSection('leaderboard')">Leaderboard</button>
 <button onclick="showSection('games')">Games</button>
 <button onclick="toggleSettings()">Settings</button>
+</div>
 
-<!-- INVENTORY -->
-<div id="inventory" class="box"></div>
+<div id="inventory" class="card box"></div>
+<div id="leaderboard" class="card box"></div>
 
-<!-- LEADERBOARD -->
-<div id="leaderboard" class="box"></div>
-
-<!-- GAMES -->
-<div id="games" class="box">
+<div id="games" class="card box">
 <button onclick="playGame()">Play Game (+100)</button>
 </div>
 
-<!-- SETTINGS -->
-<div id="settings" class="box">
+<div id="settings" class="card box">
 <p>Settings Panel</p>
 </div>
 
-</div>
-
-<!-- ADMIN -->
-
-<div class="admin-panel box">
+<div class="card admin-panel box">
 <h3>Admin Panel</h3>
-
 <input id="giveUser" placeholder="Username">
 <input id="giveAmount" type="number" placeholder="Amount">
 <button onclick="giveMoney()">Give Money</button>
+</div>
 
 </div>
 
 <script type="module" src="script.js"></script>
 
-  <input id="giftUser" placeholder="Username">
-<input id="giftPet" placeholder="Pet Name (örnek: Soul Spark)">
-<button onclick="giftPetToUser()">Give Pet</button>
-  
 </body>
 </html>
