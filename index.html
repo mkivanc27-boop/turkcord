@@ -2,22 +2,35 @@
 <html>
 <head>
   <title>Gamble Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Gamble Site</h1>
+<div class="container">
 
-<div>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
+  <div class="login-box">
+
+    <h2>Welcome Back</h2>
+
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="emailLogin()">Login / Register</button>
+
+    <div class="divider">OR</div>
+
+    <button class="google" onclick="googleLogin()">
+      Continue with Google
+    </button>
+
+  </div>
+
+  <div class="user-panel" style="display:none;">
+    <h2 id="user"></h2>
+  </div>
+
 </div>
-
-<br>
-
-<button onclick="emailLogin()">Email Login / Register</button>
-<button onclick="googleLogin()">Google Login</button>
-
-<h2 id="user"></h2>
 
 <script type="module" src="script.js"></script>
 
