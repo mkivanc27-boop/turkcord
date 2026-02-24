@@ -1,12 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
 getAuth,
-GoogleAuthProvider,
-signInWithPopup,
 signInWithEmailAndPassword,
 createUserWithEmailAndPassword,
-onAuthStateChanged,
-signOut
+GoogleAuthProvider,
+signInWithPopup,
+onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 import {
@@ -17,20 +16,16 @@ setDoc,
 collection,
 query,
 where,
-getDocs,
-onSnapshot,
-increment
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-/* 🔥 FIREBASE */
-
 const firebaseConfig = {
-apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
-authDomain: "turkcord-47b24.firebaseapp.com",
-projectId: "turkcord-47b24",
-storageBucket: "turkcord-47b24.appspot.com",
-messagingSenderId: "474688300925",
-appId: "1:474688300925:web:9204e4e86c719538438e14"
+apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+authDomain:"turkcord-47b24.firebaseapp.com",
+projectId:"turkcord-47b24",
+storageBucket:"turkcord-47b24.firebasestorage.app",
+messagingSenderId:"474688300925",
+appId:"1:474688300925:web:9204e4e86c719538438e14"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -39,218 +34,234 @@ const db = getFirestore(app);
 
 /* ================= LOGIN ================= */
 
-window.googleLogin = async () => {
+window.googleLogin = async()=>{
 const provider = new GoogleAuthProvider();
-await signInWithPopup(auth, provider);
+await signInWithPopup(auth,provider);
 };
 
-window.emailLogin = async () => {
+window.emailLogin = async()=>{
 const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+const pass = document.getElementById("password").value;
 
-try {
-await signInWithEmailAndPassword(auth, email, password);
-} catch {
-await createUserWithEmailAndPassword(auth, email, password);
+try{
+await signInWithEmailAndPassword(auth,email,pass);
+}catch{
+await createUserWithEmailAndPassword(auth,email,pass);
 }
 };
 
 /* ================= AUTH ================= */
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth,async(user)=>{
 
-if (!user) {
-document.querySelector(".login-box").style.display = "flex";
-document.querySelector(".user-panel").style.display = "none";
-return;
-}
+if(!user) return;
 
-const ref = doc(db, "users", user.uid);
+const ref = doc(db,"users",user.uid);
 const snap = await getDoc(ref);
 
-if (!snap.exists()) {
-await setDoc(ref, {
-email: user.email,
-username: null,
-balance: 1000,
-xp: 0,
-level: 1,
-role: "user"
+if(!snap.exists()){
+await setDoc(ref,{
+email:user.email,
+username:"",
+balance:1000,
+xp:0,
+level:1,
+petInventory:[]
 });
 }
 
 const data = (await getDoc(ref)).data();
 
-/* Username yoksa */
-if (!data.username) {
-document.querySelector(".login-box").style.display = "none";
-document.querySelector(".username-box").style.display = "flex";
-return;
-}
-
-document.querySelector(".login-box").style.display = "none";
-document.querySelector(".username-box").style.display = "none";
-document.querySelector(".user-panel").style.display = "flex";
+document.querySelector(".login-box").style.display="none";
+document.querySelector(".user-panel").style.display="flex";
 
 document.getElementById("welcome").innerText =
-"Welcome " + data.username;
+"Welcome "+data.username;
 
 document.getElementById("balance").innerText =
-"Balance: " + data.balance;
+"Balance: "+data.balance;
 
-document.getElementById("level").innerText =
-"Level: " + data.level;
-
-/* Realtime Balance */
-onSnapshot(ref, (snap) => {
-const d = snap.data();
-if(d){
-document.getElementById("balance").innerText =
-"Balance: " + d.balance;
-}
-});
-
-/* Admin Check */
-const adminSnap = await getDoc(doc(db,"settings","admins"));
-const admins = adminSnap.data()?.admins || [];
-
-if(admins.includes(user.uid)){
-document.querySelector(".admin-panel").style.display = "block";
-}
+loadPets();
 
 });
 
-/* ================= USERNAME ================= */
+/* ================= BUY PET ================= */
 
-window.saveUsername = async () => {
-
-const user = auth.currentUser;
-const username = document.getElementById("usernameInput").value;
-
-if(username.length < 8 || username.length > 16){
-alert("8-16 karakter");
-return;
-}
-
-const regex = /^[a-zA-Z0-9]+$/;
-if(!regex.test(username)){
-alert("Sadece harf ve sayı");
-return;
-}
-
-const q = query(collection(db,"users"),
-where("username","==",username));
-
-const snap = await getDocs(q);
-
-if(!snap.empty){
-alert("Username alınmış");
-return;
-}
-
-await setDoc(doc(db,"users",user.uid),{
-username: username
-},{merge:true});
-
-location.reload();
-};
-
-/* ================= SETTINGS ================= */
-
-window.toggleSettings = () => {
-const d = document.querySelector(".dropdown");
-d.style.display = d.style.display === "none" ? "block" : "none";
-};
-
-window.logout = async () => {
-await signOut(auth);
-location.reload();
-};
-
-window.changeUsername = async () => {
-const user = auth.currentUser;
-const newUsername = document.getElementById("newUsername").value;
-
-await setDoc(doc(db,"users",user.uid),{
-username:newUsername
-},{merge:true});
-
-location.reload();
-};
-
-/* ================= DUEL ================= */
-
-window.startDuel = async () => {
-
-const opponentUsername =
-document.getElementById("duelOpponent").value;
-
-const bet =
-parseInt(document.getElementById("duelBet").value);
-
-const mode =
-document.getElementById("gameMode").value;
-
-const user = auth.currentUser;
-
-const q = query(collection(db,"users"),
-where("username","==",opponentUsername));
-
-const snap = await getDocs(q);
-
-if(snap.empty){
-alert("Opponent yok");
-return;
-}
-
-const opponent = snap.docs[0];
-
-await setDoc(doc(collection(db,"duels")),{
-challenger:user.uid,
-opponent:opponent.id,
-bet:bet,
-gameMode:mode,
-status:"pending",
-createdAt:new Date()
-});
-
-alert("Duel gönderildi 🔥");
-};
-
-/* ================= SOLO ================= */
-
-window.playCrash = async () => {
+window.buyPet = async(name,price,rarity)=>{
 
 const user = auth.currentUser;
 const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
+const data = snap.data();
+
+/* event lock */
+if(rarity==="event"){
+alert("Event pet only from event!");
+return;
+}
+
+if(data.balance < price){
+alert("Not enough money");
+return;
+}
+
+let pets = data.petInventory || [];
+
+pets.push({
+id:Date.now(),
+name:name,
+rarity:rarity,
+level:1
+});
 
 await setDoc(ref,{
-balance: increment(50),
-xp: increment(10)
+balance:data.balance-price,
+petInventory:pets
 },{merge:true});
 
-alert("Crash oynandı +50 💰");
+loadPets();
 };
 
-window.playDice = async () => {
+/* ================= EVENT PET ================= */
+
+window.buyEventPet = async()=>{
 
 const user = auth.currentUser;
 const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
+const data = snap.data();
 
-const win = Math.random() > 0.5;
+let pets = data.petInventory || [];
 
-if(win){
-await setDoc(ref,{
-balance: increment(100),
-xp: increment(20)
-},{merge:true});
-alert("Kazandın 🎲");
-}
-else{
-await setDoc(ref,{
-balance: increment(-50)
-},{merge:true});
-alert("Kaybettin 💀");
+/* event pet ücretsiz ama event aktif mi kontrol */
+const eventSnap = await getDoc(doc(db,"events","currentEvent"));
+const eventData = eventSnap.data();
+
+if(!eventData?.active){
+alert("No active event");
+return;
 }
 
+pets.push({
+id:Date.now(),
+name:"Event Crystal Dragon",
+rarity:"event",
+level:1
+});
+
+await setDoc(ref,{
+petInventory:pets
+},{merge:true});
+
+loadPets();
 };
+
+/* ================= LOAD PETS ================= */
+
+async function loadPets(){
+
+const user = auth.currentUser;
+const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
+const data = snap.data();
+
+const container = document.getElementById("petInventory");
+container.innerHTML="";
+
+(data.petInventory||[]).forEach(p=>{
+
+const div = document.createElement("div");
+div.className="pet-card";
+
+div.innerHTML=`
+<strong>${p.name}</strong>
+<br>
+Rarity:${p.rarity}
+<br>
+Level:${p.level}
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+/* ================= FUSE ================= */
+
+window.fusePet = async()=>{
+
+const name = document.getElementById("fuseName").value;
+
+const user = auth.currentUser;
+const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
+let pets = snap.data().petInventory || [];
+
+let same = pets.filter(p=>p.name===name && p.level===1);
+
+if(same.length < 3){
+alert("Need 3 level1 pets");
+return;
+}
+
+let removed=0;
+pets = pets.filter(p=>{
+if(p.name===name && p.level===1 && removed<3){
+removed++;
+return false;
+}
+return true;
+});
+
+pets.push({
+id:Date.now(),
+name:name,
+rarity:"upgraded",
+level:2
+});
+
+await setDoc(ref,{petInventory:pets},{merge:true});
+
+loadPets();
+};
+
+/* ================= EVOLVE LEVEL3 ================= */
+
+window.evolvePet = async()=>{
+
+const name = document.getElementById("evolveName").value;
+
+const user = auth.currentUser;
+const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
+let pets = snap.data().petInventory || [];
+
+let level2 = pets.filter(p=>p.name===name && p.level===2);
+
+if(level2.length < 3){
+alert("Need 3 level2 pets");
+return;
+}
+
+let removed=0;
+pets = pets.filter(p=>{
+if(p.name===name && p.level===2 && removed<3){
+removed++;
+return false;
+}
+return true;
+});
+
+pets.push({
+id:Date.now(),
+name:name,
+rarity:"ultimate",
+level:3
+});
+
+await setDoc(ref,{petInventory:pets},{merge:true});
+
+loadPets();
+};
+  
