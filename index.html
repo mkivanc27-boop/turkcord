@@ -9,8 +9,10 @@
 
 <div class="container">
 
+<!-- LOGO -->
 <img src="file_00000000ddf0722fbd72f8dd39656a09.png" class="logo">
 
+<!-- LOGIN -->
 <div class="login-box">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
@@ -18,97 +20,91 @@
 <button onclick="login()">Login</button>
 </div>
 
+<!-- DASHBOARD -->
 <div class="user-panel" style="display:none;">
 
 <h2 id="welcome"></h2>
 <h3>💰 <span id="balance"></span></h3>
 
-<button onclick="toggleGames()">Games</button>
-
-<div id="gamesPanel" style="display:none;">
-
-<h3>🎰 Wheel</h3>
-<input id="bet">
-<button onclick="spinWheel()">Spin</button>
-<div id="result"></div>
-
-<hr>
-
-<h3>🥊 Duel</h3>
-<input id="duelUser" placeholder="Opponent Username">
-<input id="duelBet" placeholder="Bet">
-<button onclick="createDuel()">Create</button>
-<div id="duelList"></div>
-
+<!-- NAVIGATION -->
+<div class="nav">
+<button onclick="showSection('shop')">🛒 Pet Shop</button>
+<button onclick="showSection('inventory')">🐉 Inventory</button>
+<button onclick="showSection('duel')">🥊 Duel</button>
+<button onclick="showSection('market')">🏪 Market</button>
+<button onclick="showSection('settings')">⚙ Settings</button>
 </div>
 
-<hr>
-
-<h3>🛒 Pet Shop</h3>
+<!-- SHOP -->
+<div id="shop" class="box" style="display:none;">
+<h3>Pet Shop</h3>
 <div id="shopSlider" class="slider"></div>
+</div>
 
-<hr>
-
-<h3>🐉 Inventory</h3>
+<!-- INVENTORY -->
+<div id="inventory" class="box" style="display:none;">
+<h3>Inventory</h3>
 <button onclick="fusionPet()">Fuse 3 Pets</button>
 <div id="inventorySlider" class="slider"></div>
+</div>
 
-<hr>
+<!-- DUEL -->
+<div id="duel" class="box" style="display:none;">
+<h3>Duel</h3>
+<input id="duelUser" placeholder="Opponent">
+<input id="duelBet" placeholder="Bet">
+<button onclick="createDuel()">Create Duel</button>
+<div id="duelList"></div>
+</div>
 
-<h3>🏆 Leaderboard</h3>
-<div id="leaderboard"></div>
-
-<hr>
-
-<h3>🛒 Marketplace</h3>
+<!-- MARKET -->
+<div id="market" class="box" style="display:none;">
+<h3>Market</h3>
 <input id="sellPetId" placeholder="Pet ID">
 <input id="sellPrice" placeholder="Price">
-<button onclick="sellPet()">Sell</button>
+<button onclick="sellPet()">Sell Pet</button>
 <div id="marketList"></div>
+</div>
 
-<hr>
+<!-- SETTINGS -->
+<div id="settings" class="box" style="display:none;">
 
-<h3>🎉 Announcement</h3>
-<input id="announcementInput">
-<button onclick="sendAnnouncement()">Send</button>
-
-<hr>
-
-<button onclick="toggleSettings()">Settings</button>
-
-<div id="settingsMenu" style="display:none;">
+<h3>Settings</h3>
 
 <button onclick="logout()">Logout</button>
 
+<!-- ADMIN PANEL BURADA -->
 <div class="admin-panel" style="display:none;">
 
-<h2>ADMIN</h2>
+<h2>Admin Panel</h2>
 
-<h3>Ban</h3>
+<h4>Ban</h4>
 <input id="banUser">
 <button onclick="banUser()">Ban</button>
 
-<h3>Unban</h3>
+<h4>Unban</h4>
 <input id="unbanUser">
 <button onclick="unbanUser()">Unban</button>
 
-<h3>Give Money</h3>
+<h4>Give Money</h4>
 <input id="moneyUser">
 <input id="moneyAmount">
 <button onclick="giveMoney()">Give</button>
 
-<h3>Gift Pet</h3>
+<h4>Gift Pet</h4>
 <input id="giftUser">
-<input id="giftPet">
+<input id="giftPet" placeholder="Pet Name">
 <select id="giftRarity">
-<option value="common">Common</option>
-<option value="rare">Rare</option>
+<option value="event">Event</option>
 <option value="legendary">Legendary</option>
 <option value="mythic">Mythic</option>
 <option value="op">OP</option>
-<option value="event">Event</option>
 </select>
 <button onclick="giftPetToUser()">Send</button>
+
+<h4>Announcement</h4>
+<input id="announcementInput">
+<button onclick="sendAnnouncement()">Send</button>
 
 </div>
 
@@ -119,8 +115,5 @@
 </div>
 
 <script type="module" src="script.js"></script>
-<div class="container">
 </body>
 </html>
-</div>
-  </body>
