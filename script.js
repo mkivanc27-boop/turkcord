@@ -74,12 +74,35 @@ const shopPets = [
 
 /* ================= LOGIN ================= */
 
-window.login = async()=>{
+window.login = async () => {
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+if(!email || !password){
+alert("Email ve password gir!");
+return;
+}
+
+console.log("LOGIN CLICK");
+
+try{
+
 await signInWithEmailAndPassword(
 auth,
-document.getElementById("email").value,
-document.getElementById("password").value
+email,
+password
 );
+
+alert("Login Success");
+
+}catch(err){
+
+console.log(err);
+alert("Login Error:\n" + err.message);
+
+}
+
 };
 
 /* ================= AUTH ================= */
