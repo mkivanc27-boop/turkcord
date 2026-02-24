@@ -11,6 +11,7 @@
 
 <img src="logo.png" class="logo">
 
+<!-- LOGIN -->
 <div class="login-box">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
@@ -19,12 +20,14 @@
 <button onclick="googleLogin()">Google</button>
 </div>
 
+<!-- USERNAME -->
 <div class="username-box" style="display:none;">
-<h3>Choose Username</h3>
+<h3>Create Username (Only Once)</h3>
 <input id="usernameInput">
 <button onclick="saveUsername()">Save</button>
 </div>
 
+<!-- DASHBOARD -->
 <div class="user-panel" style="display:none;">
 
 <h2 id="welcome"></h2>
@@ -32,31 +35,85 @@
 
 <hr>
 
-<h3>🛒 Pet Market</h3>
+<!-- GAMBLE -->
+<h3>🎰 Gamble</h3>
 
-<button onclick="buyPet('Fire Dragon',50000,'legendary')">Fire Dragon</button>
-<button onclick="buyPet('Shadow Wolf',3000,'rare')">Shadow Wolf</button>
-<button onclick="buyPet('Golden Phoenix',250000,'mythic')">Golden Phoenix</button>
-<button onclick="buyEventPet()">Event Crystal Dragon</button>
+<input id="betAmount" type="number" placeholder="Bet Amount">
+
+<button onclick="spinWheel()">Spin Wheel</button>
+
+<div id="wheelResult"></div>
 
 <hr>
 
-<h3>🐉 Inventory</h3>
+<!-- SHOP -->
+<h3>🛒 Pet Shop</h3>
+
+<button onclick="openShop()">Open Shop</button>
+
 <div id="petInventory"></div>
 
 <hr>
 
-<h3>🔥 Fuse / Evolve</h3>
+<!-- FUSE -->
+<h3>🔥 Fuse</h3>
 <input id="fuseName" placeholder="Pet Name">
 <button onclick="fusePet()">Fuse 3 → Level2</button>
 
-<input id="evolveName" placeholder="Pet Name">
-<button onclick="evolvePet()">Fuse 3 Level2 → Level3</button>
+<hr>
+
+<!-- SETTINGS -->
+<h3>Settings</h3>
+<button onclick="logout()">Logout</button>
+
+<div class="admin-panel" style="display:none;">
+<h3>Admin Panel</h3>
+
+<input id="eventPetName" placeholder="Event Pet Name">
+<button onclick="addEventPet()">Add Event Pet</button>
 
 </div>
 
+</div>
+
+</div>
+
+<!-- SHOP MODAL -->
+<div class="shop-modal" id="shopModal">
+<div class="shop-content">
+
+<h2>Pet Shop</h2>
+
+<button onclick="buyPet('Fire Dragon',50000,'legendary')">Fire Dragon</button>
+<button onclick="buyPet('Storm Dragon',70000,'legendary')">Storm Dragon</button>
+<button onclick="buyPet('Void Dragon',90000,'legendary')">Void Dragon</button>
+
+<button onclick="buyPet('Ice Wolf',5000,'rare')">Ice Wolf</button>
+<button onclick="buyPet('Shadow Wolf',8000,'rare')">Shadow Wolf</button>
+<button onclick="buyPet('Blood Wolf',12000,'rare')">Blood Wolf</button>
+
+<button onclick="buyPet('Forest Spirit',1000,'common')">Forest Spirit</button>
+<button onclick="buyPet('Rock Golem',2000,'common')">Rock Golem</button>
+<button onclick="buyPet('Tiny Slime',500,'common')">Tiny Slime</button>
+
+<button onclick="buyPet('Galaxy Phoenix',250000,'mythic')">Galaxy Phoenix</button>
+<button onclick="buyPet('Chaos Hydra',300000,'mythic')">Chaos Hydra</button>
+<button onclick="buyPet('Cosmic Titan',500000,'mythic')">Cosmic Titan</button>
+
+<button onclick="buyPet('Thunder Beast',100000,'ultra')">Thunder Beast</button>
+<button onclick="buyPet('Lightning Demon',150000,'ultra')">Lightning Demon</button>
+<button onclick="buyPet('Sky Serpent',200000,'ultra')">Sky Serpent</button>
+
+<button onclick="buyPet('OP Dark King',1000000,'op')">OP Dark King</button>
+<button onclick="buyPet('OP Eternal Beast',1500000,'op')">OP Eternal Beast</button>
+<button onclick="buyPet('OP Supreme Dragon',2000000,'op')">OP Supreme Dragon</button>
+
+<button onclick="closeShop()">Close</button>
+
+</div>
 </div>
 
 <script type="module" src="script.js"></script>
+
 </body>
 </html>
