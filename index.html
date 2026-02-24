@@ -9,7 +9,10 @@
 
 <div class="container">
 
+<!-- LOGO -->
+<div class="logo-wrapper">
 <img src="file_00000000ddf0722fbd72f8dd39656a09.png" class="logo">
+</div>
 
 <!-- LOGIN -->
 <div class="login-box">
@@ -23,7 +26,7 @@
 
 </div>
 
-<!-- USERNAME SEÇİMİ -->
+<!-- USERNAME -->
 <div class="username-box" style="display:none;">
 <h3>Choose Username</h3>
 <input id="usernameInput" placeholder="Username">
@@ -37,8 +40,6 @@
 <h3 id="balance"></h3>
 <h4 id="level"></h4>
 
-<!-- SETTINGS -->
-<div class="settings">
 <button onclick="toggleSettings()">⚙ Settings</button>
 
 <div class="dropdown" style="display:none;">
@@ -49,16 +50,13 @@
 <button onclick="changeUsername()">Save</button>
 
 </div>
-</div>
 
 <hr>
 
-<!-- DUEL -->
-<div>
-<h3>Start Duel</h3>
+<h3>Duel</h3>
 
 <input id="duelOpponent" placeholder="Opponent Username">
-<input id="duelBet" type="number" placeholder="Bet Amount">
+<input id="duelBet" type="number" placeholder="Bet">
 
 <select id="gameMode">
 <option value="crash">Crash</option>
@@ -67,16 +65,12 @@
 </select>
 
 <button onclick="startDuel()">Send Duel</button>
-</div>
 
 <hr>
 
-<!-- SOLO GAMES -->
-<div>
 <h3>Solo Games</h3>
 <button onclick="playCrash()">Play Crash</button>
 <button onclick="playDice()">Play Dice</button>
-</div>
 
 <!-- ADMIN -->
 <div class="admin-panel" style="display:none;">
