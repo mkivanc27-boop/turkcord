@@ -5,8 +5,6 @@ background:#0f0f0f;
 color:white;
 display:flex;
 justify-content:center;
-align-items:center;
-min-height:100vh;
 }
 
 .container{
@@ -16,60 +14,46 @@ padding:20px;
 }
 
 .logo{
-width:200px;
+width:180px;
 display:block;
 margin:auto;
-filter:drop-shadow(0 0 20px #5865f2);
 }
 
 .login-box,
 .username-box,
 .user-panel{
 background:#181818;
-padding:20px;
-border-radius:15px;
+padding:15px;
+border-radius:10px;
 display:flex;
 flex-direction:column;
 gap:10px;
 }
 
-input,select{
-padding:10px;
-border-radius:8px;
+input{
+padding:8px;
+border-radius:6px;
 border:none;
 background:#222;
 color:white;
 }
 
 button{
-padding:10px;
-border-radius:8px;
+padding:8px;
 border:none;
+border-radius:6px;
 background:#5865f2;
 color:white;
 cursor:pointer;
-transition:0.2s;
 }
 
 button:hover{
-transform:scale(1.05);
 background:#4752c4;
 }
 
-.google{
-background:#db4437;
-}
-
-.dropdown{
+.pet-card{
 background:#222;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
-}
-
-.admin-panel{
-background:#2a2a2a;
-padding:15px;
-border-radius:10px;
-margin-top:15px;
+padding:8px;
+border-radius:6px;
+margin-top:5px;
 }
