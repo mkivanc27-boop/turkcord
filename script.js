@@ -125,3 +125,32 @@ onAuthStateChanged(auth, async (user) => {
   }
 
 });
+window.toggleSettings = () => {
+
+  const dropdown = document.querySelector(".dropdown");
+
+  if (dropdown.style.display === "none") {
+    dropdown.style.display = "flex";
+  } else {
+    dropdown.style.display = "none";
+  }
+};
+window.logout = async () => {
+  await auth.signOut();
+  location.reload();
+};
+window.changeNickname = async () => {
+
+  const user = auth.currentUser;
+  const newNick = document.getElementById("newNickname").value;
+
+  if (!newNick) return alert("Nickname boş olamaz");
+
+  const userRef = doc(db, "users", user.uid);
+
+  await setDoc(userRef, {
+    nickname: newNick
+  }, { merge: true });
+
+  alert("Nickname updated 🔥");
+};
