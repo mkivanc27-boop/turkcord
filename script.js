@@ -18,7 +18,7 @@ import {
 
 // 🔥 BURAYA KENDİ FIREBASE BİLGİLERİNİ KOY
 const firebaseConfig = {
-  apiKey: "BURAYA_API_KEY",
+  apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
   authDomain: "turkcord-47b24.firebaseapp.com",
   projectId: "turkcord-47b24",
   storageBucket: "turkcord-47b24.appspot.com",
@@ -86,3 +86,20 @@ onAuthStateChanged(auth, async (user) => {
   document.getElementById("user").innerText =
     "Logged in: " + user.email;
 });
+window.saveNickname = async () => {
+
+  const user = auth.currentUser;
+  const nickname = document.getElementById("nicknameInput").value;
+
+  if (!nickname) return alert("Nickname boş olamaz");
+
+  const userRef = doc(db, "users", user.uid);
+
+  await setDoc(userRef, {
+    nickname: nickname
+  }, { merge: true });
+
+  document.querySelector(".nickname-box").style.display = "none";
+
+  document.querySelector(".user-panel").style.display = "block";
+};
