@@ -7,13 +7,7 @@
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
-<div class="loading-screen" id="loading">
-<h2>Loading...</h2>
-</div>
-
-<!-- APP -->
-<div class="container" id="app" style="display:none;">
+<div class="container">
 
 <img src="file_00000000ddf0722fbd72f8dd39656a09.png" class="logo">
 
@@ -31,9 +25,9 @@
 
 <!-- USERNAME -->
 <div class="username-box" style="display:none;">
-<h3>Choose Username</h3>
+<h3>Create Username</h3>
 <input id="usernameInput" placeholder="Username">
-<button onclick="saveUsername()">Save Username</button>
+<button onclick="saveUsername()">Save</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -71,7 +65,7 @@
 
 <hr>
 
-<h3>Solo</h3>
+<h3>Solo Games</h3>
 <button onclick="playCrash()">Play Crash</button>
 <button onclick="playDice()">Play Dice</button>
 
@@ -86,6 +80,5 @@
 </div>
 
 <script type="module" src="script.js"></script>
-
 </body>
 </html>
