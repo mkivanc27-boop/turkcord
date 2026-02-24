@@ -246,3 +246,35 @@ await setDoc(doc(db,"users",q.docs[0].id),{
 balance:increment(amount)
 },{merge:true});
 };
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+async function loadLeaderboard(){
+const q=query(collection(db,"users"),orderBy("money","desc"));
+const snap=await getDocs(q);
+
+const list=document.getElementById("leaderList");
+list.innerHTML="";
+
+let rank=1;
+
+snap.forEach(docSnap=>{
+const d=docSnap.data();
+
+list.innerHTML+=`
+<div class="rank">
+${rank}. ${d.username} — $${d.money}
+</div>
+`;
+
+rank++;
+});
+}
+
+function showSection(id){
+["inventory","leaderboard","games","settings"].forEach(sec=>{
+document.getElementById(sec).classList.add("hidden");
+});
+document.getElementById(id).classList.remove("hidden");
+
+if(id==="leaderboard") loadLeaderboard();
+}
