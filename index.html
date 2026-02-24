@@ -9,12 +9,11 @@
 
 <div class="container">
 
-<!-- LOGO -->
 <img src="file_00000000ddf0722fbd72f8dd39656a09.png" class="logo">
 
 <!-- LOGIN -->
 <div class="login-box">
-<h2>Welcome</h2>
+<h2>Login</h2>
 
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
@@ -24,43 +23,66 @@
 
 </div>
 
-<!-- NICKNAME -->
-<div class="nickname-box" style="display:none;">
-<h3>Choose Nickname</h3>
-<input id="nicknameInput" placeholder="Nickname">
-<button onclick="saveNickname()">Save</button>
+<!-- USERNAME SEÇİMİ -->
+<div class="username-box" style="display:none;">
+<h3>Choose Username</h3>
+<input id="usernameInput" placeholder="Username">
+<button onclick="saveUsername()">Save Username</button>
 </div>
 
 <!-- DASHBOARD -->
 <div class="user-panel" style="display:none;">
 
 <h2 id="welcome"></h2>
-<h3 id="balance">Balance: 0</h3>
+<h3 id="balance"></h3>
+<h4 id="level"></h4>
 
+<!-- SETTINGS -->
 <div class="settings">
 <button onclick="toggleSettings()">⚙ Settings</button>
 
 <div class="dropdown" style="display:none;">
-
 <button onclick="logout()">Logout</button>
 
-<h4>Change Nickname</h4>
-<input id="newNickname">
-<button onclick="changeNickname()">Save</button>
+<h4>Change Username</h4>
+<input id="newUsername">
+<button onclick="changeUsername()">Save</button>
 
 </div>
 </div>
 
 <hr>
 
-<div class="duel">
+<!-- DUEL -->
+<div>
 <h3>Start Duel</h3>
 
-<input id="duelOpponent" placeholder="Opponent Email">
+<input id="duelOpponent" placeholder="Opponent Username">
 <input id="duelBet" type="number" placeholder="Bet Amount">
 
-<button onclick="startDuel()">Send Duel</button>
+<select id="gameMode">
+<option value="crash">Crash</option>
+<option value="coinflip">Coinflip</option>
+<option value="roulette">Roulette</option>
+</select>
 
+<button onclick="startDuel()">Send Duel</button>
+</div>
+
+<hr>
+
+<!-- SOLO GAMES -->
+<div>
+<h3>Solo Games</h3>
+<button onclick="playCrash()">Play Crash</button>
+<button onclick="playDice()">Play Dice</button>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-panel" style="display:none;">
+<h3>Admin Panel</h3>
+<button>Ban User</button>
+<button>Give Money</button>
 </div>
 
 </div>
