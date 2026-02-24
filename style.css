@@ -75,3 +75,16 @@ button:hover {
   opacity: 0.6;
   font-size: 14px;
 }
+.settings {
+  position: relative;
+}
+
+.dropdown {
+  margin-top: 10px;
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
