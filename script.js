@@ -17,7 +17,6 @@ collection,
 query,
 where,
 getDocs,
-increment,
 onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -36,14 +35,16 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let authReady = false;
+
 /* LOGIN */
 
-window.googleLogin=async()=>{
-const provider=new GoogleAuthProvider();
+window.googleLogin = async()=>{
+const provider = new GoogleAuthProvider();
 await signInWithPopup(auth,provider);
 };
 
-window.emailLogin=async()=>{
+window.emailLogin = async()=>{
 const email=document.getElementById("email").value;
 const password=document.getElementById("password").value;
 
@@ -55,14 +56,21 @@ await createUserWithEmailAndPassword(auth,email,password);
 }
 };
 
-/* USER SYSTEM */
+/* AUTH READY FIX */
 
-onAuthStateChanged(auth,async(user)=>{
+auth.onAuthStateChanged(async(user)=>{
 
-if(!user) return;
+authReady = true;
 
-const ref=doc(db,"users",user.uid);
-const snap=await getDoc(ref);
+/* USER YOKSA */
+if(!user){
+document.querySelector(".login-box").style.display="flex";
+document.querySelector(".user-panel").style.display="none";
+return;
+}
+
+const ref = doc(db,"users",user.uid);
+const snap = await getDoc(ref);
 
 if(!snap.exists()){
 await setDoc(ref,{
@@ -75,33 +83,39 @@ role:"user"
 });
 }
 
-const data=(await getDoc(ref)).data();
-
-/* UI CONTROL */
-document.querySelector(".login-box").style.display="none";
+const data = (await getDoc(ref)).data();
 
 /* Username yoksa */
 if(!data.username){
+document.querySelector(".login-box").style.display="none";
 document.querySelector(".username-box").style.display="flex";
 return;
 }
 
+/* UI Aç */
+document.querySelector(".login-box").style.display="none";
 document.querySelector(".username-box").style.display="none";
 document.querySelector(".user-panel").style.display="flex";
 
-document.getElementById("welcome").innerText="Welcome "+data.username;
-document.getElementById("balance").innerText="Balance: "+data.balance;
-document.getElementById("level").innerText="Level: "+data.level;
+document.getElementById("welcome").innerText =
+"Welcome " + data.username;
+
+document.getElementById("balance").innerText =
+"Balance: " + data.balance;
+
+document.getElementById("level").innerText =
+"Level: " + data.level;
 
 /* REALTIME BALANCE */
 onSnapshot(ref,(snap)=>{
 const d=snap.data();
-document.getElementById("balance").innerText="Balance: "+d.balance;
+document.getElementById("balance").innerText =
+"Balance: " + d.balance;
 });
 
 /* ADMIN CHECK */
-const adminSnap=await getDoc(doc(db,"settings","admins"));
-const admins=adminSnap.data()?.admins||[];
+const adminSnap = await getDoc(doc(db,"settings","admins"));
+const admins = adminSnap.data()?.admins || [];
 
 if(admins.includes(user.uid)){
 document.querySelector(".admin-panel").style.display="block";
@@ -111,24 +125,24 @@ document.querySelector(".admin-panel").style.display="block";
 
 /* USERNAME */
 
-window.saveUsername=async()=>{
+window.saveUsername = async()=>{
 
-const user=auth.currentUser;
-const username=document.getElementById("usernameInput").value;
+const user = auth.currentUser;
+const username = document.getElementById("usernameInput").value;
 
-if(username.length<8||username.length>16){
+if(username.length<8 || username.length>16){
 alert("8-16 chars");
 return;
 }
 
-const regex=/^[a-zA-Z0-9]+$/;
+const regex = /^[a-zA-Z0-9]+$/;
 if(!regex.test(username)){
 alert("Only letters & numbers");
 return;
 }
 
-const q=query(collection(db,"users"),where("username","==",username));
-const snap=await getDocs(q);
+const q = query(collection(db,"users"),where("username","==",username));
+const snap = await getDocs(q);
 
 if(!snap.empty){
 alert("Username taken");
