@@ -1,16 +1,14 @@
-
 body{
 margin:0;
 font-family:Arial, sans-serif;
 background:linear-gradient(135deg,#0f0f0f,#1a1a2e,#111);
 color:white;
-display:flex;
-justify-content:center;
 }
 
 .container{
 width:100%;
-max-width:900px;
+max-width:1200px;
+margin:auto;
 padding:30px;
 }
 
@@ -23,17 +21,17 @@ margin:auto;
 margin-bottom:20px;
 }
 
-/* LOGIN & BOX */
+/* BOX */
 
+.box,
 .login-box,
-.user-panel,
-.box{
+.user-panel{
 background:rgba(255,255,255,0.05);
 backdrop-filter:blur(10px);
 padding:25px;
 border-radius:15px;
 margin-bottom:25px;
-box-shadow:0 0 20px rgba(0,0,0,0.5);
+box-shadow:0 0 15px rgba(0,0,0,0.6);
 }
 
 /* HEADERS */
@@ -45,13 +43,13 @@ color:#00d4ff;
 /* INPUT */
 
 input,select{
+width:100%;
 padding:10px;
 border-radius:8px;
 border:none;
 background:#222;
 color:white;
 margin:5px 0;
-width:100%;
 }
 
 /* BUTTON */
@@ -78,13 +76,12 @@ box-shadow:0 0 15px #00d4ff;
 display:flex;
 gap:15px;
 overflow-x:auto;
-padding-bottom:10px;
 }
 
 /* CARD */
 
 .card{
-min-width:200px;
+min-width:220px;
 background:#1e1e1e;
 padding:15px;
 border-radius:12px;
@@ -97,20 +94,14 @@ transform:translateY(-5px);
 border-color:#00d4ff;
 }
 
-/* RARITY COLORS */
+/* RARITY */
 
 .common{color:white;}
 .rare{color:#4da6ff;}
 .legendary{color:#ffcc00;}
 .mythic{color:#ff0066;}
 .op{color:red;}
-.event{color:#00ff88;}
-
-/* ADMIN */
-
-.admin-panel{
-background:#111;
-padding:20px;
-border-radius:15px;
-border:1px solid red;
+.event{
+color:#00ff88;
+text-shadow:0 0 10px #00ff88;
 }
