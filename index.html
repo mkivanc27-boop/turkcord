@@ -2,130 +2,227 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Pet System</title>
+<title>Pet World</title>
 
 <style>
-body{
+*{
 margin:0;
-font-family:Arial;
-background:linear-gradient(180deg,#0f0f1a,#1b1b2f);
+padding:0;
+box-sizing:border-box;
+font-family:Inter, sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+min-height:100vh;
 color:white;
 }
 
-.navbar{
-background:#141428;
-padding:15px;
+.hidden{
+display:none;
+}
+
+/* LOGIN */
+
+.auth-container{
+height:100vh;
 display:flex;
 justify-content:center;
-gap:15px;
-box-shadow:0 0 15px black;
+align-items:center;
 }
 
-.navbar button{
-background:#2a2a4f;
+.auth-box{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+padding:40px;
+border-radius:20px;
+width:350px;
+text-align:center;
+box-shadow:0 0 40px rgba(0,0,0,0.5);
+}
+
+.auth-box h2{
+margin-bottom:20px;
+}
+
+.auth-box input{
+width:100%;
+padding:12px;
+margin:10px 0;
 border:none;
-padding:8px 18px;
+border-radius:10px;
+background:rgba(255,255,255,0.1);
 color:white;
-border-radius:8px;
+}
+
+.auth-box button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#6a11cb,#2575fc);
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.auth-box button:hover{
+transform:scale(1.05);
+}
+
+.switch{
+margin-top:15px;
+cursor:pointer;
+color:#aaa;
+font-size:14px;
+}
+
+/* APP */
+
+.app{
+padding:20px;
+max-width:1000px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.balance{
+background:rgba(255,255,255,0.1);
+padding:10px 20px;
+border-radius:15px;
+}
+
+.menu{
+display:flex;
+gap:15px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.menu button{
+background:rgba(255,255,255,0.08);
+border:none;
+padding:10px 20px;
+border-radius:12px;
+color:white;
 cursor:pointer;
 transition:0.2s;
 }
 
-.navbar button:hover{
-background:#4a4aff;
+.menu button:hover{
+background:linear-gradient(90deg,#ff416c,#ff4b2b);
 }
 
-.container{
-max-width:900px;
-margin:auto;
+.section{
+background:rgba(255,255,255,0.05);
 padding:20px;
+border-radius:20px;
+margin-bottom:20px;
 }
 
-.card{
-background:#1e1e35;
-padding:20px;
-margin-top:20px;
-border-radius:12px;
-box-shadow:0 0 15px rgba(0,0,0,0.5);
+.pet-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:15px;
 }
 
 .pet-card{
-background:#252545;
-padding:10px;
-margin:10px 0;
-border-radius:8px;
+background:rgba(255,255,255,0.08);
+padding:15px;
+border-radius:15px;
+text-align:center;
+transition:0.2s;
+}
+
+.pet-card:hover{
+transform:translateY(-5px);
 }
 
 .event{
-border:2px solid red;
-box-shadow:0 0 15px red;
+border:2px solid gold;
+box-shadow:0 0 20px gold;
 }
 
-.login-box{
-max-width:400px;
-margin:100px auto;
-background:#1e1e35;
-padding:20px;
-border-radius:12px;
-box-shadow:0 0 20px black;
-text-align:center;
-}
-
-input{
-width:90%;
-padding:8px;
+.admin-panel input{
+width:100%;
+padding:10px;
 margin:8px 0;
+border-radius:10px;
 border:none;
-border-radius:6px;
+background:rgba(255,255,255,0.1);
+color:white;
 }
 
-button{
+.admin-panel button{
+width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#00c9ff,#92fe9d);
 cursor:pointer;
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="auth-container" id="auth">
+<div class="auth-box">
 <h2>Login</h2>
 
-<input id="username" placeholder="Username" style="display:none;">
-<input id="email" type="email" placeholder="Email">
+<input id="username" placeholder="Username" class="hidden">
+<input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
-<button onclick="register()" id="registerBtn" style="display:none;">Register</button>
+<button onclick="register()" id="registerBtn" class="hidden">Register</button>
 
-<p onclick="toggleAuth()" style="cursor:pointer;color:#4a8cff;margin-top:10px;">
-Hesabın yok mu? Hemen yeni hesap oluştur
+<p class="switch" onclick="toggleAuth()">
+Hesabın yok mu? Yeni hesap oluştur
 </p>
 </div>
+</div>
 
-<div class="container user-panel" style="display:none;">
+<div class="app hidden" id="app">
 
+<div class="topbar">
 <h2>Welcome <span id="welcome"></span></h2>
-<p>Balance: <span id="balance"></span></p>
+<div class="balance">💰 <span id="balance"></span></div>
+</div>
 
-<div class="navbar">
+<div class="menu">
 <button onclick="showSection('inventory')">Inventory</button>
 <button onclick="showSection('leaderboard')">Leaderboard</button>
 <button onclick="showSection('games')">Games</button>
 <button onclick="toggleSettings()">Settings</button>
 </div>
 
-<div id="inventory" class="card box"></div>
-<div id="leaderboard" class="card box"></div>
+<div id="inventory" class="section"></div>
 
-<div id="games" class="card box">
+<div id="leaderboard" class="section hidden">
+<h3>Leaderboard</h3>
+<div id="leaderList"></div>
+</div>
+
+<div id="games" class="section hidden">
 <button onclick="playGame()">Play Game (+100)</button>
 </div>
 
-<div id="settings" class="card box">
-<p>Settings Panel</p>
+<div id="settings" class="section hidden">
+<h3>Settings</h3>
+<p>Coming Soon...</p>
 </div>
 
-<div class="card admin-panel box">
+<div class="section admin-panel">
 <h3>Admin Panel</h3>
 <input id="giveUser" placeholder="Username">
 <input id="giveAmount" type="number" placeholder="Amount">
