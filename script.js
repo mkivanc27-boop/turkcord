@@ -34,6 +34,37 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const shopPets = [
+{name:"Soul Spark",price:800,rarity:"common"},
+{name:"Void Hatchling",price:1200,rarity:"common"},
+{name:"Crystal Cub",price:1500,rarity:"common"},
+{name:"Shadow Pup",price:2000,rarity:"common"},
+
+{name:"Frostfang Wolf",price:5000,rarity:"rare"},
+{name:"Bloodscale Drake",price:9000,rarity:"rare"},
+{name:"Night Stalker",price:14000,rarity:"rare"},
+{name:"Phantom Lynx",price:18000,rarity:"rare"},
+
+{name:"Storm Titan",price:100000,rarity:"ultra"},
+{name:"Thunder Seraph",price:130000,rarity:"ultra"},
+{name:"Sky Beast",price:170000,rarity:"ultra"},
+{name:"Infernal Griffin",price:200000,rarity:"ultra"},
+
+{name:"Inferno Dragon",price:50000,rarity:"legendary"},
+{name:"Abyss Dragon",price:75000,rarity:"legendary"},
+{name:"Celestial Wyrm",price:90000,rarity:"legendary"},
+{name:"Oblivion Reaper",price:120000,rarity:"legendary"},
+
+{name:"Eclipse Phoenix",price:300000,rarity:"mythic"},
+{name:"Chrono Leviathan",price:500000,rarity:"mythic"},
+{name:"Omega Colossus",price:700000,rarity:"mythic"},
+{name:"Starforge Hydra",price:900000,rarity:"mythic"},
+
+{name:"Godslayer Tyrant",price:2000000,rarity:"op"},
+{name:"Void Emperor",price:2500000,rarity:"op"},
+{name:"Quantum Destroyer",price:3000000,rarity:"op"},
+{name:"Cosmic Overlord",price:5000000,rarity:"op"}
+];
 /* LOGIN */
 
 window.login=async()=>{
@@ -88,3 +119,45 @@ loadInventory();
 loadLeaderboard();
 
 });
+/* ================= EVENT / ADMIN PET GIFT SYSTEM ================= */
+
+window.giftPetToUser = async () => {
+
+const username = document.getElementById("giftUser").value;
+const petName = document.getElementById("giftPet").value;
+const rarity = document.getElementById("giftRarity").value;
+
+if(!username || !petName) return;
+
+const q = await getDocs(query(
+collection(db,"users"),
+where("username","==",username)
+));
+
+if(q.empty){
+alert("User not found");
+return;
+}
+
+const userDoc = q.docs[0];
+let pets = userDoc.data().petInventory || [];
+
+/* PET OBJESI */
+
+pets.push({
+id: Date.now(),
+name: petName,
+rarity: rarity,
+level: 1,
+effect: rarity === "event" ? "EVENT BOOST" : null,
+attack: 50,
+luck: 20,
+profitBoost: 0.2
+});
+
+await setDoc(doc(db,"users",userDoc.id),{
+petInventory: pets
+},{merge:true});
+
+alert("Pet Given Successfully");
+};
