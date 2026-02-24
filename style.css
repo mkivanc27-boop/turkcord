@@ -14,7 +14,7 @@ padding:20px;
 }
 
 .logo{
-width:160px;
+width:200px;
 display:block;
 margin:auto;
 }
@@ -32,7 +32,7 @@ border-radius:6px;
 border:none;
 background:#222;
 color:white;
-margin-bottom:5px;
+margin:4px 0;
 }
 
 button{
@@ -42,10 +42,6 @@ border-radius:6px;
 background:#5865f2;
 color:white;
 cursor:pointer;
-}
-
-button:hover{
-background:#4752c4;
 }
 
 .slider{
@@ -61,8 +57,6 @@ padding:10px;
 border-radius:8px;
 }
 
-/* RARITY COLORS */
-
 .common{color:white;}
 .rare{color:#4da6ff;}
 .legendary{color:#ffcc00;}
@@ -74,5 +68,4 @@ border-radius:8px;
 background:#111;
 padding:10px;
 border-radius:8px;
-margin-top:10px;
-  }
+}
