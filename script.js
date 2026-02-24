@@ -15,8 +15,8 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+/* ================= FIREBASE CONFIG ================= */
 
-// 🔥 BURAYA KENDİ FIREBASE BİLGİLERİNİ KOY
 const firebaseConfig = {
   apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
   authDomain: "turkcord-47b24.firebaseapp.com",
@@ -38,22 +38,19 @@ window.googleLogin = async () => {
   await signInWithPopup(auth, provider);
 };
 
-
 window.emailLogin = async () => {
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   try {
-
     await signInWithEmailAndPassword(auth, email, password);
 
   } catch (error) {
 
+    // Hesap yoksa otomatik oluştur
     if (error.code === "auth/user-not-found") {
-
       await createUserWithEmailAndPassword(auth, email, password);
-
     }
 
     console.log(error.message);
@@ -61,37 +58,17 @@ window.emailLogin = async () => {
 };
 
 
-/* ========== FIRESTORE USER CREATE ========== */
+/* ================= NICKNAME KAYDET ================= */
 
-onAuthStateChanged(auth, async (user) => {
-
-  if (!user) return;
-
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  if (!snap.exists()) {
-
-    await setDoc(userRef, {
-      email: user.email,
-      username: user.email,
-      balance: 1000,
-      vip: false,
-      role: "user",
-      createdAt: new Date()
-    });
-
-  }
-
-  document.getElementById("user").innerText =
-    "Logged in: " + user.email;
-});
 window.saveNickname = async () => {
 
   const user = auth.currentUser;
   const nickname = document.getElementById("nicknameInput").value;
 
-  if (!nickname) return alert("Nickname boş olamaz");
+  if (!nickname) {
+    alert("Nickname boş olamaz");
+    return;
+  }
 
   const userRef = doc(db, "users", user.uid);
 
@@ -100,6 +77,51 @@ window.saveNickname = async () => {
   }, { merge: true });
 
   document.querySelector(".nickname-box").style.display = "none";
-
   document.querySelector(".user-panel").style.display = "block";
+
+  document.getElementById("user").innerText =
+    "Welcome " + nickname + " 💜";
 };
+
+
+/* ================= USER CONTROL ================= */
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  // Eğer kullanıcı Firestore’da yoksa oluştur
+  if (!snap.exists()) {
+
+    await setDoc(userRef, {
+      email: user.email,
+      balance: 1000,
+      vip: false,
+      role: "user",
+      createdAt: new Date()
+    });
+
+  }
+
+  const data = (await getDoc(userRef)).data();
+
+  // Nickname yoksa nickname ekranını göster
+  if (!data.nickname) {
+
+    document.querySelector(".login-box").style.display = "none";
+    document.querySelector(".nickname-box").style.display = "flex";
+
+  } else {
+
+    document.querySelector(".login-box").style.display = "none";
+    document.querySelector(".nickname-box").style.display = "none";
+    document.querySelector(".user-panel").style.display = "block";
+
+    document.getElementById("user").innerText =
+      "Welcome " + data.nickname + " 💜";
+  }
+
+});
