@@ -1,29 +1,34 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged
+getAuth,
+GoogleAuthProvider,
+signInWithPopup,
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword,
+onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc
+getFirestore,
+doc,
+getDoc,
+setDoc,
+collection,
+query,
+where,
+getDocs,
+increment
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-/* ================= FIREBASE CONFIG ================= */
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
-  authDomain: "turkcord-47b24.firebaseapp.com",
-  projectId: "turkcord-47b24",
-  storageBucket: "turkcord-47b24.appspot.com",
-  messagingSenderId: "474688300925",
-  appId: "1:474688300925:web:9204e4e86c719538438e14"
+apiKey:"AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
+authDomain:"turkcord-47b24.firebaseapp.com",
+projectId:"turkcord-47b24",
+storageBucket:"turkcord-47b24.appspot.com",
+messagingSenderId:"474688300925",
+appId:"1:474688300925:web:9204e4e86c719538438e14"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -31,126 +36,121 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-/* ================= LOGIN ================= */
+/* LOGIN */
 
-window.googleLogin = async () => {
-  const provider = new GoogleAuthProvider();
-  await signInWithPopup(auth, provider);
+window.googleLogin = async()=>{
+const provider = new GoogleAuthProvider();
+await signInWithPopup(auth,provider);
 };
 
-window.emailLogin = async () => {
+window.emailLogin = async()=>{
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
+try{
+await signInWithEmailAndPassword(auth,email,password);
+}
+catch(e){
+await createUserWithEmailAndPassword(auth,email,password);
+}
 
-  } catch (error) {
-
-    // Hesap yoksa otomatik oluştur
-    if (error.code === "auth/user-not-found") {
-      await createUserWithEmailAndPassword(auth, email, password);
-    }
-
-    console.log(error.message);
-  }
 };
 
 
-/* ================= NICKNAME KAYDET ================= */
+/* USER SYSTEM */
 
-window.saveNickname = async () => {
+onAuthStateChanged(auth,async(user)=>{
 
-  const user = auth.currentUser;
-  const nickname = document.getElementById("nicknameInput").value;
+if(!user) return;
 
-  if (!nickname) {
-    alert("Nickname boş olamaz");
-    return;
-  }
+const ref=doc(db,"users",user.uid);
+const snap=await getDoc(ref);
 
-  const userRef = doc(db, "users", user.uid);
+if(!snap.exists()){
+await setDoc(ref,{
+email:user.email,
+balance:1000,
+role:"user"
+});
+}
 
-  await setDoc(userRef, {
-    nickname: nickname
-  }, { merge: true });
+const data=(await getDoc(ref)).data();
 
-  document.querySelector(".nickname-box").style.display = "none";
-  document.querySelector(".user-panel").style.display = "block";
+document.querySelector(".login-box").style.display="none";
+document.querySelector(".nickname-box").style.display="none";
+document.querySelector(".user-panel").style.display="flex";
 
-  document.getElementById("user").innerText =
-    "Welcome " + nickname + " 💜";
-};
+document.getElementById("welcome").innerText="Welcome "+(data.nickname||user.email);
 
-
-/* ================= USER CONTROL ================= */
-
-onAuthStateChanged(auth, async (user) => {
-
-  if (!user) return;
-
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  // Eğer kullanıcı Firestore’da yoksa oluştur
-  if (!snap.exists()) {
-
-    await setDoc(userRef, {
-      email: user.email,
-      balance: 1000,
-      vip: false,
-      role: "user",
-      createdAt: new Date()
-    });
-
-  }
-
-  const data = (await getDoc(userRef)).data();
-
-  // Nickname yoksa nickname ekranını göster
-  if (!data.nickname) {
-
-    document.querySelector(".login-box").style.display = "none";
-    document.querySelector(".nickname-box").style.display = "flex";
-
-  } else {
-
-    document.querySelector(".login-box").style.display = "none";
-    document.querySelector(".nickname-box").style.display = "none";
-    document.querySelector(".user-panel").style.display = "block";
-
-    document.getElementById("user").innerText =
-      "Welcome " + data.nickname + " 💜";
-  }
+document.getElementById("balance").innerText="Balance: "+data.balance;
 
 });
-window.toggleSettings = () => {
 
-  const dropdown = document.querySelector(".dropdown");
 
-  if (dropdown.style.display === "none") {
-    dropdown.style.display = "flex";
-  } else {
-    dropdown.style.display = "none";
-  }
+/* NICKNAME */
+
+window.saveNickname=async()=>{
+
+const user=auth.currentUser;
+const nick=document.getElementById("nicknameInput").value;
+
+await setDoc(doc(db,"users",user.uid),{
+nickname:nick
+},{merge:true});
+
 };
-window.logout = async () => {
-  await auth.signOut();
-  location.reload();
+
+
+/* SETTINGS */
+
+window.toggleSettings=()=>{
+const d=document.querySelector(".dropdown");
+d.style.display=d.style.display==="none"?"block":"none";
 };
-window.changeNickname = async () => {
 
-  const user = auth.currentUser;
-  const newNick = document.getElementById("newNickname").value;
+window.logout=async()=>{
+await auth.signOut();
+location.reload();
+};
 
-  if (!newNick) return alert("Nickname boş olamaz");
+window.changeNickname=async()=>{
+const user=auth.currentUser;
+const newNick=document.getElementById("newNickname").value;
 
-  const userRef = doc(db, "users", user.uid);
+await setDoc(doc(db,"users",user.uid),{
+nickname:newNick
+},{merge:true});
+};
 
-  await setDoc(userRef, {
-    nickname: newNick
-  }, { merge: true });
 
-  alert("Nickname updated 🔥");
+/* DUEL (BASIC) */
+
+window.startDuel=async()=>{
+
+const opponentEmail=document.getElementById("duelOpponent").value;
+const bet=parseInt(document.getElementById("duelBet").value);
+
+const user=auth.currentUser;
+
+const usersRef=collection(db,"users");
+const q=query(usersRef,where("email","==",opponentEmail));
+const snap=await getDocs(q);
+
+if(snap.empty){
+alert("Opponent not found");
+return;
+}
+
+const opponent=snap.docs[0];
+
+await setDoc(doc(collection(db,"duels")),{
+challenger:user.uid,
+opponent:opponent.id,
+bet:bet,
+status:"pending"
+});
+
+alert("Duel sent 🔥");
+
 };
