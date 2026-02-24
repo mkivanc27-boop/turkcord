@@ -7,7 +7,13 @@
 </head>
 <body>
 
-<div class="container">
+<!-- LOADING SCREEN -->
+<div class="loading-screen" id="loading">
+<h2>Loading...</h2>
+</div>
+
+<!-- APP -->
+<div class="container" id="app" style="display:none;">
 
 <img src="file_00000000ddf0722fbd72f8dd39656a09.png" class="logo">
 
@@ -26,7 +32,7 @@
 <!-- USERNAME -->
 <div class="username-box" style="display:none;">
 <h3>Choose Username</h3>
-<input id="usernameInput" placeholder="Username (8-16 chars)">
+<input id="usernameInput" placeholder="Username">
 <button onclick="saveUsername()">Save Username</button>
 </div>
 
@@ -65,13 +71,13 @@
 
 <hr>
 
-<h3>Solo Games</h3>
+<h3>Solo</h3>
 <button onclick="playCrash()">Play Crash</button>
 <button onclick="playDice()">Play Dice</button>
 
 <div class="admin-panel" style="display:none;">
 <h3>Admin Panel</h3>
-<button>Ban User</button>
+<button>Ban</button>
 <button>Give Money</button>
 </div>
 
@@ -80,5 +86,6 @@
 </div>
 
 <script type="module" src="script.js"></script>
+
 </body>
 </html>
