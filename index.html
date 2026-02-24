@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TurboChat</title>
+<title>TurboCord</title>
 
 <style>
 *{
@@ -37,6 +37,7 @@ padding:12px;
 width:260px;
 border-radius:8px;
 border:none;
+outline:none;
 }
 
 #loginScreen button{
@@ -70,8 +71,6 @@ gap:10px;
 flex-shrink:0;
 }
 
-/* SERVER BUTTON */
-
 .server{
 width:48px;
 height:48px;
@@ -89,7 +88,7 @@ background:#5865f2;
 transform:scale(1.1);
 }
 
-/* CHANNEL PANEL */
+/* SIDEBAR */
 
 #sidebar{
 width:240px;
@@ -168,119 +167,13 @@ color:white;
 cursor:pointer;
 }
 
-
-/* APP */
-
-#app{
-display:none;
-height:100vh;
-width:100%;
-}
-
-/* SERVER BAR */
-
-#servers{
-width:72px;
-background:#202225;
-display:flex;
-flex-direction:column;
-align-items:center;
-padding-top:10px;
-gap:10px;
-flex-shrink:0;
-}
-
-.server{
-width:48px;
-height:48px;
-border-radius:50%;
-background:#2b2d31;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:0.2s;
-}
-
-.server:hover{
-background:#5865f2;
-}
-
-/* SIDEBAR */
-
-#sidebar{
-width:240px;
-background:#2b2d31;
-padding:10px;
-overflow:auto;
-flex-shrink:0;
-border-right:1px solid #202225;
-}
-
-/* CHAT */
-
-#chat{
-flex:1;
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
-
-#messages{
-flex:1;
-overflow:auto;
-padding:15px;
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.message{
-background:#40444b;
-padding:10px;
-border-radius:10px;
-max-width:60%;
-}
-
-.message.me{
-background:#5865f2;
-align-self:flex-end;
-}
-
-/* INPUT */
-
-#input{
-display:flex;
-padding:10px;
-background:#2b2d31;
-gap:10px;
-}
-
-#input input{
-flex:1;
-padding:10px;
-border-radius:8px;
-border:none;
-background:#40444b;
-color:white;
-}
-
-#input button{
-padding:10px 15px;
-border:none;
-border-radius:8px;
-background:#5865f2;
-color:white;
-cursor:pointer;
-}
-
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="loginScreen">
-<h2>TurboChat</h2>
+<h2>TurboCord Login</h2>
 
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
@@ -319,14 +212,12 @@ cursor:pointer;
 
 <script type="module">
 
-/* ================= FIREBASE ================= */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* 🔥 YOUR CONFIG */
+/* 🔥 SENİN FIREBASE BİLGİLERİN */
 
 const firebaseConfig = {
 apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
@@ -345,15 +236,13 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ================= STATE ================= */
-
 let currentRoom=null;
 
 /* ================= AUTH ================= */
 
 window.login = async()=>{
 
-const email = emailInput.value;
+const email = email.value;
 const pass = password.value;
 
 try{
@@ -369,12 +258,12 @@ onAuthStateChanged(auth,user=>{
 
 if(user){
 loginScreen.style.display="none";
-appDiv.style.display="flex";
+app.style.display="flex";
 loadServers();
 }
 else{
 loginScreen.style.display="flex";
-appDiv.style.display="none";
+app.style.display="none";
 }
 
 });
