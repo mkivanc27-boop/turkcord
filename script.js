@@ -23,7 +23,7 @@ onSnapshot
 /* FIREBASE */
 
 const firebaseConfig = {
-apiKey: "AIzaSyC98wxJq8kNZFdE-OJ1Tlpy1ANuaRUT14",
+apiKey: "AIzaSyC98wxJQk8yNZFdE-OJ1Tlpy1ANuaRUT14",
 authDomain: "turkcord-47b24.firebaseapp.com",
 projectId: "turkcord-47b24",
 storageBucket: "turkcord-47b24.firebasestorage.app",
@@ -35,64 +35,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ================= ADMIN UID ================= */
+/* ADMIN UID */
 
 const admins = ["yM7VK1uxhGPb7knLVMzwhLDc3iz1"];
 
-/* ================= PET LIST ================= */
-
-const shopPets = [
-{name:"Soul Spark",price:800,rarity:"common"},
-{name:"Void Hatchling",price:1200,rarity:"common"},
-{name:"Crystal Cub",price:1500,rarity:"common"},
-{name:"Shadow Pup",price:2000,rarity:"common"},
-
-{name:"Frostfang Wolf",price:5000,rarity:"rare"},
-{name:"Bloodscale Drake",price:9000,rarity:"rare"},
-{name:"Night Stalker",price:14000,rarity:"rare"},
-{name:"Phantom Lynx",price:18000,rarity:"rare"},
-
-{name:"Storm Titan",price:100000,rarity:"ultra"},
-{name:"Thunder Seraph",price:130000,rarity:"ultra"},
-{name:"Sky Beast",price:170000,rarity:"ultra"},
-{name:"Infernal Griffin",price:200000,rarity:"ultra"},
-
-{name:"Inferno Dragon",price:50000,rarity:"legendary"},
-{name:"Abyss Dragon",price:75000,rarity:"legendary"},
-{name:"Celestial Wyrm",price:90000,rarity:"legendary"},
-{name:"Oblivion Reaper",price:120000,rarity:"legendary"},
-
-{name:"Eclipse Phoenix",price:300000,rarity:"mythic"},
-{name:"Chrono Leviathan",price:500000,rarity:"mythic"},
-{name:"Omega Colossus",price:700000,rarity:"mythic"},
-{name:"Starforge Hydra",price:900000,rarity:"mythic"},
-
-{name:"Godslayer Tyrant",price:2000000,rarity:"op"},
-{name:"Void Emperor",price:2500000,rarity:"op"},
-{name:"Quantum Destroyer",price:3000000,rarity:"op"},
-{name:"Cosmic Overlord",price:5000000,rarity:"op"}
-];
-
-/* ================= AUTH TOGGLE ================= */
-
-window.isRegister = false;
+/* ================= TOGGLE ================= */
 
 window.toggleAuth = () => {
 
-window.isRegister = !window.isRegister;
-
-const usernameInput = document.getElementById("username");
+const username = document.getElementById("username");
 const registerBtn = document.getElementById("registerBtn");
-const authTitle = document.getElementById("authTitle");
 
-if(window.isRegister){
-usernameInput.style.display="block";
-registerBtn.style.display="inline-block";
-authTitle.innerText="Register";
+if(username.style.display === "none"){
+username.style.display = "block";
+registerBtn.style.display = "inline-block";
 }else{
-usernameInput.style.display="none";
-registerBtn.style.display="none";
-authTitle.innerText="Login";
+username.style.display = "none";
+registerBtn.style.display = "none";
 }
 
 };
@@ -104,15 +63,15 @@ window.login = async () => {
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
+if(!email || !password){
+alert("Email ve password gir!");
+return;
+}
+
 try{
-
 await signInWithEmailAndPassword(auth,email,password);
-alert("Login Success");
-
 }catch(err){
-
-alert("Login Error:\n"+err.message);
-
+alert(err.message);
 }
 
 };
@@ -126,7 +85,7 @@ const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
 if(!username || !email || !password){
-alert("Fill all fields");
+alert("Tum alanlari doldur");
 return;
 }
 
@@ -141,12 +100,10 @@ banned:false,
 petInventory:[]
 });
 
-alert("Account Created!");
+alert("Hesap oluşturuldu");
 
 }catch(err){
-
-alert("Register Error:\n"+err.message);
-
+alert(err.message);
 }
 
 };
@@ -172,7 +129,7 @@ snap = await getDoc(ref);
 
 let data = snap.data();
 
-/* ADMIN CHECK */
+/* ADMIN */
 
 if(admins.includes(user.uid)){
 const adminPanel = document.querySelector(".admin-panel");
@@ -181,7 +138,7 @@ adminPanel.style.display="block";
 }
 }
 
-/* USERNAME AUTO FIX */
+/* USERNAME CHECK */
 
 if(data.username===""){
 let name = prompt("Choose Username");
@@ -189,7 +146,7 @@ await setDoc(ref,{username:name},{merge:true});
 data.username = name;
 }
 
-/* BAN CHECK */
+/* BAN */
 
 if(data.banned){
 alert("BANNED");
@@ -208,9 +165,11 @@ if(userPanel) userPanel.style.display="block";
 document.getElementById("welcome").innerText=data.username;
 document.getElementById("balance").innerText=data.balance;
 
-loadShop();
-loadInventory();
-loadLeaderboard();
+/* ESKİ SİSTEMLERİN */
+
+loadShop?.();
+loadInventory?.();
+loadLeaderboard?.();
 
 });
 
