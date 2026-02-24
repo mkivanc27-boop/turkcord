@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gambling Community</title>
+<title>Gambling Community FINAL</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,8 +15,8 @@
 <div class="login-box">
 <h2>Login</h2>
 <input id="email" placeholder="Email">
-<input id="password" type="password">
-<button onclick="emailLogin()">Login</button>
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -25,35 +25,20 @@
 <h2 id="welcome"></h2>
 <h3>💰 <span id="balance"></span></h3>
 
-<!-- GAME MENU -->
 <button onclick="toggleGames()">🎮 Games</button>
 
 <div id="gamesPanel" style="display:none;">
 
 <h3>🎰 Wheel</h3>
-<input id="betAmount" type="number" placeholder="Bet">
+<input id="bet" type="number" placeholder="Bet">
 <button onclick="spinWheel()">Spin</button>
-<div id="spinResult"></div>
-
-<hr>
-
-<h3>🎲 Dice</h3>
-<button onclick="diceGame()">Roll Dice</button>
-<div id="diceResult"></div>
-
-<hr>
-
-<h3>💥 Crash</h3>
-<button onclick="crashGame()">Start Crash</button>
-<div id="crashResult"></div>
+<div id="result"></div>
 
 </div>
 
 <hr>
 
-<h3>🛒 Shop</h3>
-<button onclick="openShop()">Open Shop</button>
-
+<h3>🛒 Pet Shop</h3>
 <div class="slider" id="shopSlider"></div>
 
 <hr>
@@ -63,7 +48,6 @@
 
 <hr>
 
-<!-- SETTINGS -->
 <button onclick="toggleSettings()">⚙ Settings</button>
 
 <div id="settingsMenu" style="display:none;">
@@ -71,9 +55,39 @@
 <button onclick="logout()">Logout</button>
 
 <div class="admin-panel" style="display:none;">
-<h3>Admin Panel</h3>
-<input id="eventPetName" placeholder="Event Pet">
-<button onclick="addEventPet()">Add Event Pet</button>
+
+<h2>👑 SUPER ADMIN</h2>
+
+<h3>Ban User</h3>
+<input id="banUser" placeholder="Username">
+<button onclick="banUser()">Ban</button>
+
+<h3>Unban</h3>
+<input id="unbanUser">
+<button onclick="unbanUser()">Unban</button>
+
+<h3>Give Money</h3>
+<input id="moneyUser" placeholder="Username">
+<input id="moneyAmount" type="number">
+<button onclick="giveMoney()">Give</button>
+
+<h3>Gift Pet</h3>
+<input id="giftUser" placeholder="Username">
+<input id="giftPet">
+<select id="giftRarity">
+<option value="common">Common</option>
+<option value="rare">Rare</option>
+<option value="legendary">Legendary</option>
+<option value="mythic">Mythic</option>
+<option value="op">OP</option>
+<option value="event">Event</option>
+</select>
+<button onclick="giftPetToUser()">Send</button>
+
+<h3>Global Announcement</h3>
+<input id="announcement">
+<button onclick="sendAnnouncement()">Send</button>
+
 </div>
 
 </div>
@@ -83,6 +97,5 @@
 </div>
 
 <script type="module" src="script.js"></script>
-
 </body>
 </html>
