@@ -1,7 +1,8 @@
+
 body{
 margin:0;
-font-family:Arial;
-background:#0f0f0f;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#0f0f0f,#1a1a2e,#111);
 color:white;
 display:flex;
 justify-content:center;
@@ -9,53 +10,94 @@ justify-content:center;
 
 .container{
 width:100%;
-max-width:420px;
-padding:20px;
+max-width:900px;
+padding:30px;
 }
+
+/* LOGO */
 
 .logo{
 width:200px;
 display:block;
 margin:auto;
+margin-bottom:20px;
 }
+
+/* LOGIN & BOX */
 
 .login-box,
-.user-panel{
-background:#181818;
-padding:15px;
-border-radius:10px;
+.user-panel,
+.box{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:15px;
+margin-bottom:25px;
+box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 
-input{
-padding:8px;
-border-radius:6px;
+/* HEADERS */
+
+h2,h3{
+color:#00d4ff;
+}
+
+/* INPUT */
+
+input,select{
+padding:10px;
+border-radius:8px;
 border:none;
 background:#222;
 color:white;
-margin:4px 0;
+margin:5px 0;
+width:100%;
 }
 
+/* BUTTON */
+
 button{
-padding:8px;
+padding:10px 15px;
 border:none;
-border-radius:6px;
-background:#5865f2;
+border-radius:8px;
+background:linear-gradient(90deg,#5865f2,#00d4ff);
 color:white;
+font-weight:bold;
 cursor:pointer;
+transition:0.3s;
 }
+
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 15px #00d4ff;
+}
+
+/* SLIDER */
 
 .slider{
 display:flex;
+gap:15px;
 overflow-x:auto;
-gap:10px;
+padding-bottom:10px;
 }
 
+/* CARD */
+
 .card{
-min-width:160px;
-background:#222;
-padding:10px;
-border-radius:8px;
+min-width:200px;
+background:#1e1e1e;
+padding:15px;
+border-radius:12px;
+border:1px solid #333;
+transition:0.3s;
 }
+
+.card:hover{
+transform:translateY(-5px);
+border-color:#00d4ff;
+}
+
+/* RARITY COLORS */
 
 .common{color:white;}
 .rare{color:#4da6ff;}
@@ -64,8 +106,11 @@ border-radius:8px;
 .op{color:red;}
 .event{color:#00ff88;}
 
+/* ADMIN */
+
 .admin-panel{
 background:#111;
-padding:10px;
-border-radius:8px;
+padding:20px;
+border-radius:15px;
+border:1px solid red;
 }
