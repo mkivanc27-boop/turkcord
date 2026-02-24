@@ -34,6 +34,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* ================= ADMIN UID ================= */
+
+const admins = ["yM7VK1uxhGPb7knLVMzwhLDc3iz1"];
+
+/* ================= PET LIST ================= */
+
 const shopPets = [
 {name:"Soul Spark",price:800,rarity:"common"},
 {name:"Void Hatchling",price:1200,rarity:"common"},
@@ -65,9 +71,10 @@ const shopPets = [
 {name:"Quantum Destroyer",price:3000000,rarity:"op"},
 {name:"Cosmic Overlord",price:5000000,rarity:"op"}
 ];
-/* LOGIN */
 
-window.login=async()=>{
+/* ================= LOGIN ================= */
+
+window.login = async()=>{
 await signInWithEmailAndPassword(
 auth,
 document.getElementById("email").value,
@@ -75,16 +82,14 @@ document.getElementById("password").value
 );
 };
 
-/* AUTH */
+/* ================= AUTH ================= */
 
 onAuthStateChanged(auth,async(user)=>{
-if(admins.includes(user.uid)){
-document.querySelector(".admin-panel").style.display="block";
-}
-if(!user) return;
 
-const ref=doc(db,"users",user.uid);
-let snap=await getDoc(ref);
+if(!user) return; // 🔥 FIX USER NULL CRASH
+
+const ref = doc(db,"users",user.uid);
+let snap = await getDoc(ref);
 
 if(!snap.exists()){
 await setDoc(ref,{
@@ -93,16 +98,29 @@ balance:1000,
 banned:false,
 petInventory:[]
 });
-snap=await getDoc(ref);
+snap = await getDoc(ref);
 }
 
-let data=snap.data();
+let data = snap.data();
+
+/* ================= ADMIN CHECK FIX ================= */
+
+if(admins.includes(user.uid)){
+const adminPanel = document.querySelector(".admin-panel");
+if(adminPanel){
+adminPanel.style.display="block";
+}
+}
+
+/* ================= USERNAME CHECK ================= */
 
 if(data.username===""){
-let name=prompt("Choose Username");
+let name = prompt("Choose Username");
 await setDoc(ref,{username:name},{merge:true});
-data.username=name;
+data.username = name;
 }
+
+/* ================= BAN CHECK ================= */
 
 if(data.banned){
 alert("BANNED");
@@ -110,8 +128,13 @@ signOut(auth);
 return;
 }
 
-document.querySelector(".login-box").style.display="none";
-document.querySelector(".user-panel").style.display="block";
+/* ================= UI ================= */
+
+const loginBox = document.querySelector(".login-box");
+const userPanel = document.querySelector(".user-panel");
+
+if(loginBox) loginBox.style.display="none";
+if(userPanel) userPanel.style.display="block";
 
 document.getElementById("welcome").innerText=data.username;
 document.getElementById("balance").innerText=data.balance;
@@ -121,9 +144,10 @@ loadInventory();
 loadLeaderboard();
 
 });
-/* ================= EVENT / ADMIN PET GIFT SYSTEM ================= */
 
-window.giftPetToUser = async () => {
+/* ================= EVENT / ADMIN PET GIFT ================= */
+
+window.giftPetToUser = async()=>{
 
 const username = document.getElementById("giftUser").value;
 const petName = document.getElementById("giftPet").value;
@@ -144,31 +168,42 @@ return;
 const userDoc = q.docs[0];
 let pets = userDoc.data().petInventory || [];
 
-/* PET OBJESI */
+/* PET OBJECT */
 
-pets.push({
+let newPet = {
 id: Date.now(),
 name: petName,
 rarity: rarity,
 level: 1,
 effect: rarity === "event" ? "EVENT BOOST" : null,
-attack: 50,
 luck: 20,
 profitBoost: 0.2
-});
+};
+
+/* EVENT POWER */
+
+if(rarity === "event"){
+newPet.luck = 200;
+newPet.profitBoost = 2;
+}
+
+pets.push(newPet);
 
 await setDoc(doc(db,"users",userDoc.id),{
 petInventory: pets
 },{merge:true});
 
 alert("Pet Given Successfully");
+
 };
+
 window.showSection = (id)=>{
 
 document.querySelectorAll(".box").forEach(box=>{
 box.style.display="none";
 });
 
-document.getElementById(id).style.display="block";
+const section = document.getElementById(id);
+if(section) section.style.display="block";
 
 };
